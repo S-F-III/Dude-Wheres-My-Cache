@@ -13,6 +13,51 @@
         android:theme="@style/Theme.DudeWheresMyCash"
         tools:targetApi="31">
         <activity
+            android:name=".MonthlySpendingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DataActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CustomCategoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BudgetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AccountInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ExpenseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".NotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HamburgerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".OverviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WelcomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
