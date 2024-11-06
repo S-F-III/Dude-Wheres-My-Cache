@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
 
-            //Steve 1:50pm 11/4
+            //this is the change
         });
     }
 }
