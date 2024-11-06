@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
 
             //this is the change
+            //Darius 6:04 11/5
         });
     }
 }
