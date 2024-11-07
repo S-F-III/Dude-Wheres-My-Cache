@@ -7,6 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".OverviewActivity">
 
+    <ImageView
+        android:id="@+id/hbMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:clickable="true"
+        android:focusable="true"
+        app:srcCompat="@drawable/hamburger" />
+
     <TextView
         android:id="@+id/overview_message"
         android:layout_width="wrap_content"
@@ -16,6 +26,7 @@
         android:text="Hello User"
         android:textSize="24sp"
         android:textStyle="bold"
+        android:gravity="center_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,6 +38,7 @@
         android:padding="16dp"
         android:text="Currently Spent"
         android:textSize="24sp"
+        android:gravity="center_horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/overview_message" />
@@ -45,5 +57,8 @@
 
 
     </ScrollView>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

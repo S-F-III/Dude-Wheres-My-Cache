@@ -1,6 +1,10 @@
 package com.example.dudewheresmycash;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -25,6 +29,15 @@ public class OverviewActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+       ImageView hbMenu = findViewById(R.id.hbMenu);
+        hbMenu.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                launchHBMenu();
+            }
+        });
+
 
         Calendar now = Calendar.getInstance();
         String userName = getIntent().getStringExtra("USER_NAME");
@@ -88,4 +101,9 @@ public class OverviewActivity extends AppCompatActivity {
                             categoryLayoutMain.addView(categoryLayout);
      */
     }
+    private void launchHBMenu(){
+        Intent intent = new Intent(this, HamburgerActivity.class);
+        startActivity(intent);
+    }
+
 }
