@@ -6,6 +6,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ExpenseActivity">
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/hbMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:clickable="true"
+        android:focusable="true"
+        app:srcCompat="@drawable/hamburger" />
 
     <RelativeLayout
         android:id="@+id/hamburgerMenu"
@@ -146,14 +158,6 @@
 
 
     </RelativeLayout>
-    <ImageView
-        android:id="@+id/hbMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:clickable="true"
-        android:focusable="true"
-        app:srcCompat="@drawable/hamburger" />
+</FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
