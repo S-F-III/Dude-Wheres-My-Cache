@@ -87,7 +87,6 @@ public class AccountManager {
         }
         if (userAccount != null) {
             userAccounts.add(userAccount);
-            //saveAccountsToFile(); // Save the updated account list after adding
         }
     }
 

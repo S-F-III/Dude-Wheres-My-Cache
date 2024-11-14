@@ -1,6 +1,7 @@
 package com.example.dudewheresmycash;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +25,7 @@ import java.util.Calendar;
 
 public class OverviewActivity extends AppCompatActivity {
 
+    private AccountManager accountManager;
     private UserAccount userAccount;
     private CategoryTracker categoryTracker;
 
@@ -91,23 +94,37 @@ public class OverviewActivity extends AppCompatActivity {
             }
         });
 
+        // Retrieve user ID from shared preferences
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("USER_ID", null);
 
-
-        Calendar now = Calendar.getInstance();
-        String userName = getIntent().getStringExtra("USER_NAME");
-        String userBudget = getIntent().getStringExtra("USER_BUDGET");
-
-        //displays a good morning message or good afternoon message with the user's name
-        if (now.get(Calendar.HOUR_OF_DAY) < 12) {
-            TextView overviewMessage = findViewById(R.id.overview_message);
-            overviewMessage.setText("Good Morning " + userName);
-        } else {
-            TextView overviewMessage = findViewById(R.id.overview_message);
-            overviewMessage.setText("Good Afternoon " + userName);
+        if (userId != null) {
+            accountManager = new AccountManager(this);
+            accountManager.initializeAccountList();
+            userAccount = accountManager.getUserAccount(userId);
         }
 
-        TextView user_spent_amt = findViewById(R.id.budget_spent_amt);
-        user_spent_amt.setText("Current Budget: " + "\n$" +userBudget);
+        if (userAccount != null) {
+            String userName = userAccount.getUserName();
+            String userBudget = userAccount.getUserBudget();
+
+            Calendar now = Calendar.getInstance();
+            //displays a good morning message or good afternoon message with the user's name
+            if (now.get(Calendar.HOUR_OF_DAY) < 12) {
+                TextView overviewMessage = findViewById(R.id.overview_message);
+                overviewMessage.setText("Good Morning " + userName);
+            } else {
+                TextView overviewMessage = findViewById(R.id.overview_message);
+                overviewMessage.setText("Good Afternoon " + userName);
+            }
+
+            //displays the budget
+            TextView user_spent_amt = findViewById(R.id.budget_spent_amt);
+            user_spent_amt.setText("Current Budget: " + "\n$" + userBudget);
+        }
+        else{
+            Toast.makeText(this, "User's account is null", Toast.LENGTH_SHORT).show();
+        }
 
         dynamicCategorySetup();
 
@@ -138,6 +155,9 @@ public class OverviewActivity extends AppCompatActivity {
         startActivity(intent);
     }
     private void launchSignOut() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        sharedPreferences.edit().remove("USER_ID").apply();
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

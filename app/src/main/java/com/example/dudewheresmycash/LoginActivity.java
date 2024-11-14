@@ -1,6 +1,7 @@
 package com.example.dudewheresmycash;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -54,6 +55,13 @@ public class LoginActivity extends AppCompatActivity {
             } else if (id.equals(currAccount.getUserID()) && !(pass.equals(currAccount.getUserPassword()))) {
                 Toast.makeText(this, "Error: Incorrect Password", Toast.LENGTH_SHORT).show();
             } else {
+                // Save user ID to SharedPreferences before launching the next activity
+                SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("USER_ID", id); // Store the user ID here
+                editor.apply();
+
+                //launch the OverviewActivity
                 Intent intent = new Intent(this, OverviewActivity.class);
                 intent.putExtra("USER_ID", id);
                 intent.putExtra("USER_PASSWORD", pass);
