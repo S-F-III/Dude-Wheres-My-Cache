@@ -23,6 +23,7 @@ import java.util.Calendar;
 
 public class OverviewActivity extends AppCompatActivity {
 
+    private UserAccount userAccount;
     private CategoryTracker categoryTracker;
 
     @Override
@@ -108,15 +109,54 @@ public class OverviewActivity extends AppCompatActivity {
         TextView user_spent_amt = findViewById(R.id.budget_spent_amt);
         user_spent_amt.setText("Current Budget: " + "\n$" +userBudget);
 
-    /*
-    *This code serves as a dynamic way to load all categories, including custom ones
-    * It will make a scrollable view that will have a picture of the color to the left
-    * And the name of the category to the right
-    * We load a list of categories from a file
-    * and iterate through them to populate the category list
-    * still need to modify this to pull data based on user
-    * and exception/debugging statements
-    */
+        dynamicCategorySetup();
+
+    }
+
+    private void launchOverview() {
+        Intent intent = new Intent(this, OverviewActivity.class);
+        startActivity(intent);
+    }
+    private void launchExpenses() {
+        Intent intent = new Intent(this, ExpenseActivity.class);
+        startActivity(intent);
+    }
+    private void launchNotfications() {
+        Intent intent = new Intent(this, NotificationActivity.class);
+        startActivity(intent);
+    }
+    private void launchAccountInfo() {
+        Intent intent = new Intent(this, AccountInfoActivity.class);
+        startActivity(intent);
+    }
+    private void launchSettings() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+    private void launchMonthlySpending() {
+        Intent intent = new Intent(this, MonthlySpendingActivity.class);
+        startActivity(intent);
+    }
+    private void launchSignOut() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    private void createCategoryList(){
+        categoryTracker = new CategoryTracker();
+        categoryTracker.loadCategories(this);
+    }
+
+    public void dynamicCategorySetup(){
+        /*
+         *This code serves as a dynamic way to load all categories, including custom ones
+         * It will make a scrollable view that will have a picture of the color to the left
+         * And the name of the category to the right
+         * We load a list of categories from a file
+         * and iterate through them to populate the category list
+         * still need to modify this to pull data based on user
+         * and exception/debugging statements
+         */
         // Initialize the list of categories
         createCategoryList();
 
@@ -157,41 +197,6 @@ public class OverviewActivity extends AppCompatActivity {
 
             // Add the horizontal layout to the main category layout
             categoryLayoutMain.addView(categoryLayout);
-         }
-
+        }
     }
-    private void launchOverview() {
-        Intent intent = new Intent(this, OverviewActivity.class);
-        startActivity(intent);
-    }
-    private void launchExpenses() {
-        Intent intent = new Intent(this, ExpenseActivity.class);
-        startActivity(intent);
-    }
-    private void launchNotfications() {
-        Intent intent = new Intent(this, NotificationActivity.class);
-        startActivity(intent);
-    }
-    private void launchAccountInfo() {
-        Intent intent = new Intent(this, AccountInfoActivity.class);
-        startActivity(intent);
-    }
-    private void launchSettings() {
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
-    }
-    private void launchMonthlySpending() {
-        Intent intent = new Intent(this, MonthlySpendingActivity.class);
-        startActivity(intent);
-    }
-    private void launchSignOut() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
-
-    private void createCategoryList(){
-        categoryTracker = new CategoryTracker();
-        categoryTracker.loadCategories(this);
-    }
-
 }
