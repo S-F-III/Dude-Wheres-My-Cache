@@ -15,6 +15,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private AccountManager accountManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +27,9 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        accountManager = new AccountManager(this);
+        accountManager.initializeAccountList();
 
         EditText inputUserID = (EditText) findViewById(R.id.inputUserID);
         EditText inputUserPassword = (EditText) findViewById(R.id.inputPassword);
@@ -41,14 +46,25 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void launchActivity(String button, String id, String pass){
-        if(!(id.isEmpty()) && !(pass.isEmpty())){
-            Intent intent = new Intent(this, OverviewActivity.class);
-            intent.putExtra("USER_ID", id);
-            intent.putExtra("USER_PASSWORD", pass);
-            startActivity(intent);
+        UserAccount currAccount = accountManager.getUserAccount(id);
+
+        if(currAccount != null) {
+            if (!(id.equals(currAccount.getUserID()))) {
+                Toast.makeText(this, "Error: No existing username found", Toast.LENGTH_SHORT).show();
+            } else if (id.equals(currAccount.getUserID()) && !(pass.equals(currAccount.getUserPassword()))) {
+                Toast.makeText(this, "Error: Incorrect Password", Toast.LENGTH_SHORT).show();
+            } else {
+                Intent intent = new Intent(this, OverviewActivity.class);
+                intent.putExtra("USER_ID", id);
+                intent.putExtra("USER_PASSWORD", pass);
+                intent.putExtra("USER_NAME", currAccount.getUserName());
+                intent.putExtra("USER_BUDGET", currAccount.getUserBudget());
+                startActivity(intent);
+            }
         }
         else{
-            Toast.makeText(this, "Error: Incorrect Username or Password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "current account not found", Toast.LENGTH_SHORT).show();
         }
     }
+
 }

@@ -15,6 +15,8 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class SignUpActivity extends AppCompatActivity {
 
+    private AccountManager accountManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +34,9 @@ public class SignUpActivity extends AppCompatActivity {
         EditText inputUserBudget = (EditText) findViewById(R.id.inputBudget);
         Button nextButton = findViewById(R.id.next_button);
 
+        accountManager = new AccountManager(this);
+        accountManager.initializeAccountList();
+
         nextButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -39,6 +44,9 @@ public class SignUpActivity extends AppCompatActivity {
                 String userID = inputUserID.getText().toString();
                 String userPassword = inputPassword.getText().toString();
                 String userBudget = inputUserBudget.getText().toString();
+                UserAccount newAccount = new UserAccount(userID, userPassword, userName, userBudget);
+                accountManager.addUserAccount(newAccount);
+                accountManager.saveAccountsToFile();
                 launchActivity("Next", userName, userID, userPassword, userBudget);
             }
         });
