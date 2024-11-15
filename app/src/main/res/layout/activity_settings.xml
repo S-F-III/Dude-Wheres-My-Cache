@@ -185,7 +185,7 @@
             android:layout_marginTop="25dp"
             android:layout_marginEnd="57dp"
             android:fontFamily="monospace"
-            android:text="Setttings"
+            android:text="Settings"
             android:textColor="#ffffff"
             android:clickable="true"
             android:focusable="true"

@@ -188,7 +188,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:fontFamily="monospace"
-                        android:text="Setttings"
+                        android:text="Settings"
                         android:textColor="#ffffff"
                         android:textSize="24sp" />
 
