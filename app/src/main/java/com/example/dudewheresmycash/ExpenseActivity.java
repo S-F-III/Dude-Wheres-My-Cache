@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -50,8 +51,30 @@ public class ExpenseActivity extends AppCompatActivity {
         TextView settingsButton = findViewById(R.id.settingsButton);
         TextView monthlySpendingButton = findViewById(R.id.monthlySpendingButton);
         TextView signOutButton = findViewById(R.id.signOutButton);
+
+        //overlays for adding/modifying/removing expenses
+        Button addExpenseButton = findViewById(R.id.addExpense_button);
+        TextView cancelAddExpenseButton = findViewById(R.id.cancelAddExpenseButton);
+        Button modifyExpenseButton = findViewById(R.id.modifyExpense_button);
+        TextView cancelModifyExpenseButton = findViewById(R.id.cancelModifyExpenseButton);
+        TextView modifySelectedExpenseButton = findViewById(R.id.modifySelectedExpenseButton);
+        Button removeExpenseButton = findViewById(R.id.removeExpense_button);
+        TextView cancelRemoveExpenseButton = findViewById(R.id.cancelRemoveExpenseButton);
+        TextView cancelSelectedModifyExpenseButton = findViewById(R.id.cancelSelectedModifyExpenseButton);
+
+        addExpenseButton.setOnClickListener(v -> findViewById(R.id.addExpenseOverlay).setVisibility(View.VISIBLE));
+        cancelAddExpenseButton.setOnClickListener(v -> findViewById(R.id.addExpenseOverlay).setVisibility(View.GONE));
+        modifyExpenseButton.setOnClickListener(v -> findViewById(R.id.modifyExpenseOverlay).setVisibility(View.VISIBLE));
+        cancelModifyExpenseButton.setOnClickListener(v -> findViewById(R.id.modifyExpenseOverlay).setVisibility(View.GONE));
+        modifySelectedExpenseButton.setOnClickListener(v -> findViewById(R.id.modifySelectedExpenseOverlay).setVisibility(View.VISIBLE));
+        cancelSelectedModifyExpenseButton.setOnClickListener(v -> findViewById(R.id.modifySelectedExpenseOverlay).setVisibility(View.GONE));
+        removeExpenseButton.setOnClickListener(v -> findViewById(R.id.removeExpenseOverlay).setVisibility(View.VISIBLE));
+        cancelRemoveExpenseButton.setOnClickListener(v -> findViewById(R.id.removeExpenseOverlay).setVisibility(View.GONE));
+
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
+
+
         overviewButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -95,6 +118,8 @@ public class ExpenseActivity extends AppCompatActivity {
             }
         });
     }
+
+
 
     //creates list of expenses
     private void createExpenseList(){
