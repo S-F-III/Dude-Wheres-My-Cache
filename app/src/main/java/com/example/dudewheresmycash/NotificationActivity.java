@@ -3,6 +3,7 @@ package com.example.dudewheresmycash;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,6 +28,11 @@ public class NotificationActivity extends AppCompatActivity {
 
         ImageView hbMenu = findViewById(R.id.hbMenu);
         ImageView hbMenu2 = findViewById(R.id.hbMenu2);
+        Button addNotificationButton = findViewById(R.id.addNotificationButton);
+        TextView cancelAddButton = findViewById(R.id.cancelAddButton);
+        Button removeNotificationButton = findViewById(R.id.removeNotificationButton);
+        TextView cancelRemoveButton = findViewById(R.id.cancelRemoveButton);
+
         TextView overviewButton = findViewById(R.id.overviewButton);
         TextView expenseButton = findViewById(R.id.expenseButton);
         TextView notificationButton = findViewById(R.id.notificationButton);
@@ -34,8 +40,15 @@ public class NotificationActivity extends AppCompatActivity {
         TextView settingsButton = findViewById(R.id.settingsButton);
         TextView monthlySpendingButton = findViewById(R.id.monthlySpendingButton);
         TextView signOutButton = findViewById(R.id.signOutButton);
+
+        //For the overlays
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
+        addNotificationButton.setOnClickListener(v -> findViewById(R.id.notificationAddBox).setVisibility(View.VISIBLE));
+        cancelAddButton.setOnClickListener(v -> findViewById(R.id.notificationAddBox).setVisibility(View.GONE));
+        removeNotificationButton.setOnClickListener(v -> findViewById(R.id.notificationRemoveBox).setVisibility(View.VISIBLE));
+        cancelRemoveButton.setOnClickListener(v -> findViewById(R.id.notificationRemoveBox).setVisibility(View.GONE));
+
         overviewButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){

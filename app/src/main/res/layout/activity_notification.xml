@@ -247,7 +247,120 @@
 
 
                 </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/notificationAddBox"
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
+                    android:background="#808080"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent">
 
+                    <TextView
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:text="Notification Title:"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp"/>
+                    <EditText
+                        android:id="@+id/inputNotificationTitle"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="25dp"
+                        android:ems="10"
+                        android:inputType="text"
+                        android:text=""
+                        android:textColor="#FFFFFF"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:textSize="25sp"/>
+                    <TextView
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:text="Deadline Date:"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:layout_marginTop="100dp"
+                        android:layout_marginBottom="8dp"/>
+                    <EditText
+                        android:id="@+id/inputNotificationDate"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="125dp"
+                        android:ems="10"
+                        android:inputType="text"
+                        android:text=""
+                        android:textColor="#FFFFFF"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:textSize="25sp"/>
+                    <TextView
+                        android:id="@+id/submitAddButton"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:text="Submit"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:layout_marginTop="200dp"
+                        android:layout_marginBottom="8dp"/>
+                    <TextView
+                        android:id="@+id/cancelAddButton"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:text="Cancel"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:layout_marginTop="250dp"
+                        android:layout_marginBottom="8dp"/>
+
+
+                </RelativeLayout>
+                <RelativeLayout
+                    android:id="@+id/notificationRemoveBox"
+                    android:layout_width="300dp"
+                    android:layout_height="300dp"
+                    android:background="#808080"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <TextView
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:text="Select To Remove"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:layout_marginBottom="8dp"/>
+                    <TextView
+                        android:id="@+id/submitAddButton"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:text="Done"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:layout_marginTop="200dp"
+                        android:layout_marginBottom="8dp"/>
+                    <TextView
+                        android:id="@+id/cancelRemoveButton"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        android:text="Cancel"
+                        android:textColor="#FFFFFF"
+                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:layout_marginTop="250dp"
+                        android:layout_marginBottom="8dp"/>
+
+
+
+                </RelativeLayout>
 
             </FrameLayout>
 
