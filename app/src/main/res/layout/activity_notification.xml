@@ -7,161 +7,242 @@
     android:layout_height="match_parent"
     tools:context=".NotificationActivity">
 
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/notificationsTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="Notifications"
+        android:textColor="#000000"
+        android:textSize="38sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/notificationsTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="90dp">
+
+        <!-- Add Notification Button -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Notification"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/addNotificationButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:text="+"
+                android:textSize="24sp"
+                android:textColor="@color/white"
+
+                android:layout_gravity="center_horizontal" />
+        </LinearLayout>
+
+        <!-- Remove Notification Button -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="32dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remove Notification"
+                android:textColor="#000000"
+                android:textSize="25sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/removeNotificationButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:text="−"
+                android:textSize="24sp"
+                android:textColor="@color/white"
+                android:layout_gravity="center_horizontal" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:id="@+id/hamburgerMenu"
+                    android:layout_width="300dp"
+                    android:layout_height="500dp"
+                    android:background="#808080"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <ImageView
+                        android:id="@+id/hbMenu2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/hamburger" />
+
+                    <TextView
+                        android:id="@+id/overviewButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginTop="79dp"
+                        android:layout_marginEnd="174dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="monospace"
+                        android:text="Overview"
+                        android:textColor="#ffffff"
+                        android:textSize="24sp" />
+
+                    <TextView
+                        android:id="@+id/expenseButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/overviewButton"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginEnd="148dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="monospace"
+                        android:text="Expenses"
+                        android:textColor="#ffffff"
+                        android:textSize="24sp" />
+
+                    <TextView
+                        android:id="@+id/notificationButton"
+                        android:layout_width="235dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/expenseButton"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginEnd="57dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="monospace"
+                        android:text="Notifications"
+                        android:textColor="#ffffff"
+                        android:textSize="24sp" />
+
+                    <TextView
+                        android:id="@+id/accountInfoButton"
+                        android:layout_width="235dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/notificationButton"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginEnd="57dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="monospace"
+                        android:text="Account Info"
+                        android:textColor="#ffffff"
+                        android:textSize="24sp" />
+
+                    <TextView
+                        android:id="@+id/settingsButton"
+                        android:layout_width="235dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/accountInfoButton"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginEnd="57dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="monospace"
+                        android:text="Setttings"
+                        android:textColor="#ffffff"
+                        android:textSize="24sp" />
+
+                    <TextView
+                        android:id="@+id/monthlySpendingButton"
+                        android:layout_width="235dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/settingsButton"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginEnd="57dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="monospace"
+                        android:text="Monthly Spending"
+                        android:textColor="#ffffff"
+                        android:textSize="24sp" />
+
+                    <TextView
+                        android:id="@+id/signOutButton"
+                        android:layout_width="235dp"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/monthlySpendingButton"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="25dp"
+                        android:layout_marginEnd="57dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="monospace"
+                        android:text="Sign Out"
+                        android:textColor="#ffffff"
+                        android:textSize="24sp" />
+
+
+                </RelativeLayout>
+
+
+            </FrameLayout>
+        </LinearLayout>
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/hbMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:clickable="true"
         android:focusable="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/hamburger" />
 
-    <RelativeLayout
-        android:id="@+id/hamburgerMenu"
-        android:layout_width="300dp"
-        android:layout_height="500dp"
-        android:background="#808080"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageView
-            android:id="@+id/hbMenu2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:clickable="true"
-            android:focusable="true"
-            app:srcCompat="@drawable/hamburger" />
-
-        <TextView
-            android:id="@+id/overviewButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="79dp"
-            android:layout_marginEnd="174dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:fontFamily="monospace"
-            android:text="Overview"
-            android:textColor="#ffffff"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/expenseButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/overviewButton"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="148dp"
-            android:fontFamily="monospace"
-            android:text="Expenses"
-            android:textColor="#ffffff"
-            android:clickable="true"
-            android:focusable="true"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/notificationButton"
-            android:layout_width="235dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/expenseButton"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="57dp"
-            android:fontFamily="monospace"
-            android:text="Notifications"
-            android:textColor="#ffffff"
-            android:clickable="true"
-            android:focusable="true"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/accountInfoButton"
-            android:layout_width="235dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/notificationButton"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="57dp"
-            android:fontFamily="monospace"
-            android:text="Account Info"
-            android:textColor="#ffffff"
-            android:clickable="true"
-            android:focusable="true"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/settingsButton"
-            android:layout_width="235dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/accountInfoButton"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="57dp"
-            android:fontFamily="monospace"
-            android:text="Setttings"
-            android:textColor="#ffffff"
-            android:clickable="true"
-            android:focusable="true"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/monthlySpendingButton"
-            android:layout_width="235dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/settingsButton"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="57dp"
-            android:fontFamily="monospace"
-            android:text="Monthly Spending"
-            android:textColor="#ffffff"
-            android:clickable="true"
-            android:focusable="true"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/signOutButton"
-            android:layout_width="235dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/monthlySpendingButton"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="57dp"
-            android:fontFamily="monospace"
-            android:text="Sign Out"
-            android:textColor="#ffffff"
-            android:clickable="true"
-            android:focusable="true"
-            android:textSize="24sp" />
-
-
-    </RelativeLayout>
-
-
-
-    </FrameLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
