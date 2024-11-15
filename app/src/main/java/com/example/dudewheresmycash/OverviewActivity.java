@@ -167,7 +167,7 @@ public class OverviewActivity extends AppCompatActivity {
         categoryTracker.loadCategories(this);
     }
 
-    public void dynamicCategorySetup(){
+    private void dynamicCategorySetup(){
         /*
          *This code serves as a dynamic way to load all categories, including custom ones
          * It will make a scrollable view that will have a picture of the color to the left

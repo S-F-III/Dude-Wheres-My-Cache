@@ -58,7 +58,7 @@ public class ExpenseBank {
     }
 
     // Load expenses from the file
-    private void loadUserExpenses(InputStream in) {
+    public void loadUserExpenses(InputStream in) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         if (in != null) {

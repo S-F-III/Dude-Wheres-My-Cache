@@ -1,13 +1,19 @@
 package com.example.dudewheresmycash;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -15,6 +21,9 @@ import androidx.core.view.WindowInsetsCompat;
 import java.util.ArrayList;
 
 public class ExpenseActivity extends AppCompatActivity {
+
+    private ExpenseBank expenseBank;
+    private Expense expense;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +35,11 @@ public class ExpenseActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("USER_ID", null);
+
+        dynamicExpenseSetup(userId);
 
         ImageView hbMenu = findViewById(R.id.hbMenu);
         ImageView hbMenu2 = findViewById(R.id.hbMenu2);
@@ -82,10 +96,66 @@ public class ExpenseActivity extends AppCompatActivity {
         });
     }
 
+    //creates list of expenses
+    private void createExpenseList(){
+        expenseBank = new ExpenseBank(this);
+        expenseBank.initializeExpenseList();
+    }
+
     //method to return total amount of money spent on all user expenses (not finished)
-    public double calculateTotalUserExpenses(ArrayList<Expense> expenses, String expenseOwner){
+    private double calculateTotalUserExpenses(ArrayList<Expense> expenses, String expenseOwner){
         double totalExpenses = 0.00;
         return totalExpenses;
+    }
+
+    private void dynamicExpenseSetup(String userAcc){
+        //initialize list of expenses
+        createExpenseList();
+
+        if(expenseBank != null){
+            LinearLayout expenseLayoutMain = findViewById(R.id.expense_layout);
+            expenseLayoutMain.removeAllViews(); // Clear any previous data before adding new views
+
+            for(Expense expense : expenseBank.getExpenses()){
+                if(expense.getExpenseOwner().equals(userAcc)) {
+                    Log.d("ExpenseActivity", "Adding expense: " + expense.getExpenseAmount() + " " + expense.getExpenseDescription());
+
+                    // Create a vertical LinearLayout for each expense
+                    LinearLayout expenseLayout = new LinearLayout(this);
+                    expenseLayout.setOrientation(LinearLayout.VERTICAL);
+                    expenseLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                    // Create the TextView for expense amount and description
+                    TextView expenseDescr = new TextView(this);
+                    expenseDescr.setText(String.valueOf(expense.getExpenseAmount()) + " " + String.valueOf(expense.getExpenseDescription()));
+                    expenseDescr.setTypeface(null, Typeface.BOLD); // Make text bold
+                    expenseDescr.setLayoutParams(new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT));
+                    expenseDescr.setPadding(0, 0, 0, 8); // Optional padding to separate description from date
+
+                    // Create the TextView for date expense was made
+                    TextView expenseDate = new TextView(this);
+                    expenseDate.setText(String.valueOf(expense.getDate()));
+                    expenseDate.setLayoutParams(new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT));
+                    expenseDate.setPadding(0, 0, 0, 16); // Optional padding to separate bottom of entry to top of next
+
+                    // Add both TextViews to the vertical layout
+                    expenseLayout.addView(expenseDescr);
+                    expenseLayout.addView(expenseDate);
+
+                    // Add the vertical layout to the main expense layout
+                    expenseLayoutMain.addView(expenseLayout);
+                }
+            }
+        }
+        else{
+            Toast.makeText(this, "No expenses found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void launchOverview() {
@@ -113,6 +183,9 @@ public class ExpenseActivity extends AppCompatActivity {
         startActivity(intent);
     }
     private void launchSignOut() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        sharedPreferences.edit().remove("USER_ID").apply();
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
