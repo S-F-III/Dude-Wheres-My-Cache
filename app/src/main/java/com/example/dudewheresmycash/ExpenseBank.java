@@ -35,6 +35,16 @@ public class ExpenseBank {
         this.expenses = expenses;
     }
 
+    //finds an expense that belongs to a specified user
+    public Expense findExpenseByOwner(String userID){
+        for (Expense expense : expenses){
+            if(expense.getExpenseOwner().equals(userID)){
+                return expense;
+            }
+        }
+        return null;
+    }
+
     // Method to initialize or create the expense list file if it doesn't exist
     public void initializeExpenseList() {
         try {

@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,6 +41,41 @@ public class ExpenseActivity extends AppCompatActivity {
         String userId = sharedPreferences.getString("USER_ID", null);
 
         dynamicExpenseSetup(userId);
+
+        Button addExpense = findViewById(R.id.addExpense_button);
+        Button deleteExpense = findViewById(R.id.removeExpense_button);
+        Button modifyExpense = findViewById(R.id.modifyExpense_button);
+
+        addExpense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        deleteExpense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(expenseBank.findExpenseByOwner(userId) != null){
+
+                }
+                else{
+                    Toast.makeText(view.getContext(), "User has no expenses", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        modifyExpense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(expenseBank.findExpenseByOwner(userId) != null){
+
+                }
+                else{
+                    Toast.makeText(view.getContext(), "User has no expenses", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         ImageView hbMenu = findViewById(R.id.hbMenu);
         ImageView hbMenu2 = findViewById(R.id.hbMenu2);
