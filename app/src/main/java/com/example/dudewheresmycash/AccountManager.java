@@ -106,4 +106,16 @@ public class AccountManager {
             e.printStackTrace();
         }
     }
+
+    public void changeUserName(String currentName, String newName){
+
+    }
+
+    public void changeUserPassword(String currentPassword, String newPassword){
+
+    }
+
+    public void changeUserBudget(String currentBudget, String newBudget){
+
+    }
 }

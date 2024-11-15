@@ -12,6 +12,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.ArrayList;
+
 public class ExpenseActivity extends AppCompatActivity {
 
     @Override
@@ -79,6 +81,13 @@ public class ExpenseActivity extends AppCompatActivity {
             }
         });
     }
+
+    //method to return total amount of money spent on all user expenses (not finished)
+    public double calculateTotalUserExpenses(ArrayList<Expense> expenses, String expenseOwner){
+        double totalExpenses = 0.00;
+        return totalExpenses;
+    }
+
     private void launchOverview() {
         Intent intent = new Intent(this, OverviewActivity.class);
         startActivity(intent);
