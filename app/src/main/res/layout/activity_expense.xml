@@ -522,12 +522,14 @@
                 android:textColor="#FFFFFF"
                 android:checked="false" />
 
-            <TextView
+            <Button
+                android:id="@+id/doneAddExpenseButton"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="400dp"
                 android:text="Done"
                 android:textColor="#FFFFFF"
+                android:backgroundTint="@color/green"
                 android:textSize="24sp"
                 android:gravity="center"
                 android:layout_marginBottom="8dp"/>
@@ -560,21 +562,38 @@
                 android:textSize="24sp"
                 android:gravity="center"
                 android:layout_marginBottom="8dp"/>
-            <TextView
+            <ScrollView
+                android:id="@+id/removeExpenseScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="16dp">
+                <!--may have to use constraint layout
+                to occupy the space dynamically-->
+
+                <LinearLayout
+                    android:id="@+id/removeExpense_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+            <Button
+                android:id="@+id/removeSelectedExpenseButton"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="300dp"
-                android:text="Select"
+                android:text="Remove"
                 android:textColor="#FFFFFF"
+                android:backgroundTint="@color/red"
                 android:textSize="24sp"
                 android:gravity="center"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"/>
             <TextView
                 android:id="@+id/cancelRemoveExpenseButton"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="350dp"
-                android:text="Cancel"
+                android:text="Done"
                 android:textColor="#FFFFFF"
                 android:textSize="24sp"
                 android:gravity="center"

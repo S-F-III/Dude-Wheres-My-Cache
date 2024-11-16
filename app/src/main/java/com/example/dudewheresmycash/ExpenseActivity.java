@@ -2,11 +2,14 @@ package com.example.dudewheresmycash;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,7 +22,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ExpenseActivity extends AppCompatActivity {
 
@@ -42,41 +48,6 @@ public class ExpenseActivity extends AppCompatActivity {
 
         dynamicExpenseSetup(userId);
 
-        Button addExpense = findViewById(R.id.addExpense_button);
-        Button deleteExpense = findViewById(R.id.removeExpense_button);
-        Button modifyExpense = findViewById(R.id.modifyExpense_button);
-
-        addExpense.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
-
-        deleteExpense.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(expenseBank.findExpenseByOwner(userId) != null){
-
-                }
-                else{
-                    Toast.makeText(view.getContext(), "User has no expenses", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        modifyExpense.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(expenseBank.findExpenseByOwner(userId) != null){
-
-                }
-                else{
-                    Toast.makeText(view.getContext(), "User has no expenses", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
         ImageView hbMenu = findViewById(R.id.hbMenu);
         ImageView hbMenu2 = findViewById(R.id.hbMenu2);
         TextView overviewButton = findViewById(R.id.overviewButton);
@@ -97,17 +68,104 @@ public class ExpenseActivity extends AppCompatActivity {
         TextView cancelRemoveExpenseButton = findViewById(R.id.cancelRemoveExpenseButton);
         TextView cancelSelectedModifyExpenseButton = findViewById(R.id.cancelSelectedModifyExpenseButton);
 
-        addExpenseButton.setOnClickListener(v -> findViewById(R.id.addExpenseOverlay).setVisibility(View.VISIBLE));
-        cancelAddExpenseButton.setOnClickListener(v -> findViewById(R.id.addExpenseOverlay).setVisibility(View.GONE));
+
         modifyExpenseButton.setOnClickListener(v -> findViewById(R.id.modifyExpenseOverlay).setVisibility(View.VISIBLE));
         cancelModifyExpenseButton.setOnClickListener(v -> findViewById(R.id.modifyExpenseOverlay).setVisibility(View.GONE));
         modifySelectedExpenseButton.setOnClickListener(v -> findViewById(R.id.modifySelectedExpenseOverlay).setVisibility(View.VISIBLE));
         cancelSelectedModifyExpenseButton.setOnClickListener(v -> findViewById(R.id.modifySelectedExpenseOverlay).setVisibility(View.GONE));
-        removeExpenseButton.setOnClickListener(v -> findViewById(R.id.removeExpenseOverlay).setVisibility(View.VISIBLE));
-        cancelRemoveExpenseButton.setOnClickListener(v -> findViewById(R.id.removeExpenseOverlay).setVisibility(View.GONE));
 
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
+
+        addExpenseButton.setOnClickListener(v -> {
+            // Show the overlay
+            findViewById(R.id.addExpenseOverlay).setVisibility(View.VISIBLE);
+
+            Button doneButton = findViewById(R.id.doneAddExpenseButton); // Button in overlay
+            doneButton.setOnClickListener(doneView -> {
+                // Retrieve input values
+                EditText amountInput = findViewById(R.id.inputExpenseAmount);
+                EditText categoryInput = findViewById(R.id.inputExpenseCategory);
+                EditText descriptionInput = findViewById(R.id.inputExpenseDescription);
+                EditText dateInput = findViewById(R.id.inputExpenseDate);
+                CheckBox recurringCheckBox = findViewById(R.id.isRecurringAdd);
+
+                // Validate inputs
+                String amountText = amountInput.getText().toString().trim();
+                String category = categoryInput.getText().toString().trim();
+                String description = descriptionInput.getText().toString().trim();
+                String dateText = dateInput.getText().toString().trim();
+                boolean isRecurring = recurringCheckBox.isChecked();
+
+                if (amountText.isEmpty() || category.isEmpty() || description.isEmpty() || dateText.isEmpty()) {
+                    Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                try {
+                    // Parse inputs
+                    double amount = Double.parseDouble(amountText);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate date = LocalDate.parse(dateText, formatter);
+
+                    // Create the Expense object
+                    Expense newExpense = new Expense(
+                            getNextAvailableID(userId), // Assume ID is auto-incremented or managed elsewhere
+                            userId, // Current user's ID from SharedPreferences
+                            amount,
+                            category,
+                            description,
+                            date,
+                            isRecurring
+                    );
+
+                    // Save to CSV
+                    expenseBank.addUserExpense(newExpense);
+                    expenseBank.saveExpensesToFile();
+
+                    // Clear input fields and hide overlay
+                    amountInput.setText("");
+                    categoryInput.setText("");
+                    descriptionInput.setText("");
+                    dateInput.setText("");
+                    recurringCheckBox.setChecked(false);
+                    findViewById(R.id.addExpenseOverlay).setVisibility(View.GONE);
+                    dynamicExpenseSetup(userId);
+
+                    Toast.makeText(this, "Expense added successfully!", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(this, "Invalid input format.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        cancelAddExpenseButton.setOnClickListener(v -> {
+            // Clear input fields
+            EditText amountInput = findViewById(R.id.inputExpenseAmount);
+            EditText categoryInput = findViewById(R.id.inputExpenseCategory);
+            EditText descriptionInput = findViewById(R.id.inputExpenseDescription);
+            EditText dateInput = findViewById(R.id.inputExpenseDate);
+            CheckBox recurringCheckBox = findViewById(R.id.isRecurringAdd);
+
+            amountInput.setText("");
+            categoryInput.setText("");
+            descriptionInput.setText("");
+            dateInput.setText("");
+            recurringCheckBox.setChecked(false);
+
+            // Hide the overlay
+            findViewById(R.id.addExpenseOverlay).setVisibility(View.GONE);
+        });
+
+        removeExpenseButton.setOnClickListener(v -> {
+            findViewById(R.id.removeExpenseOverlay).setVisibility(View.VISIBLE);
+            populateExpenseList(userId);
+        });
+
+        cancelRemoveExpenseButton.setOnClickListener(v -> {
+            findViewById(R.id.removeExpenseOverlay).setVisibility(View.GONE);
+            dynamicExpenseSetup(userId);
+        });
 
 
         overviewButton.setOnClickListener(new View.OnClickListener(){
@@ -162,6 +220,19 @@ public class ExpenseActivity extends AppCompatActivity {
         expenseBank.initializeExpenseList();
     }
 
+    //gets the next highest available ID to assign to a new expense
+    private int getNextAvailableID(String userAcc) {
+        int maxID = 0; // Start with 0; you can start with 1 if IDs should be 1-based.
+        if (expenseBank != null) {
+            for (Expense expense : expenseBank.getExpenses()) {
+                if (expense.getExpenseOwner().equals(userAcc)) {
+                    maxID = Math.max(maxID, expense.getExpenseID());
+                }
+            }
+        }
+        return maxID + 1; // Return the next ID after the highest existing one.
+    }
+
     //method to return total amount of money spent on all user expenses (not finished)
     private double calculateTotalUserExpenses(ArrayList<Expense> expenses, String expenseOwner){
         double totalExpenses = 0.00;
@@ -189,7 +260,8 @@ public class ExpenseActivity extends AppCompatActivity {
 
                     // Create the TextView for expense amount and description
                     TextView expenseDescr = new TextView(this);
-                    expenseDescr.setText(String.valueOf(expense.getExpenseAmount()) + " " + String.valueOf(expense.getExpenseDescription()));
+                    String expenseInfo = String.format("$ %.2f %s", expense.getExpenseAmount(), String.valueOf(expense.getExpenseDescription()));
+                    expenseDescr.setText(expenseInfo);
                     expenseDescr.setTypeface(null, Typeface.BOLD); // Make text bold
                     expenseDescr.setLayoutParams(new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -215,6 +287,68 @@ public class ExpenseActivity extends AppCompatActivity {
         }
         else{
             Toast.makeText(this, "No expenses found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void populateExpenseList(String userAcc) {
+        LinearLayout expenseListContainer = findViewById(R.id.removeExpense_layout);
+        Button removeSelectedExpenseButton = findViewById(R.id.removeSelectedExpenseButton);
+        expenseListContainer.removeAllViews(); // Clear existing views
+
+        // Fetch the user's expenses
+        if (expenseBank != null) {
+            Log.d("populateExpenseList", "Total Expenses: " + expenseBank.getExpenses().size());
+            for(Expense expense : expenseBank.getExpenses()) {
+                Log.d("populateExpenseList", "Owner: " + expense.getExpenseOwner());
+                if (expense.getExpenseOwner().equals(userAcc)) {
+                    Log.d("populateExpenseList", "Matching Expense: " + expense.getExpenseDescription());
+
+                    Button expenseButton = new Button(this);
+                    expenseButton.setText(expense.getExpenseDescription() + " - $" + expense.getExpenseAmount());
+                    expenseButton.setTag(expense); // Store the expense object in the tag
+                    expenseButton.setOnClickListener(v -> {
+                        // Highlight the selected button
+                        clearSelections(expenseListContainer);
+                        expenseButton.setBackgroundColor(Color.LTGRAY);
+                        removeSelectedExpenseButton.setVisibility(View.VISIBLE);
+
+                        // Set the expense to be removed
+                        removeSelectedExpenseButton.setOnClickListener(removeView -> {
+                            removeExpense((Expense) expenseButton.getTag(), userAcc);
+                        });
+                    });
+
+                    expenseListContainer.addView(expenseButton);
+                }
+            }
+        }
+        else {
+            Log.e("populateExpenseList", "ExpenseBank is null!");
+            Toast.makeText(this, "No expenses found for this user.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void clearSelections(LinearLayout container) {
+        for (int i = 0; i < container.getChildCount(); i++) {
+            View child = container.getChildAt(i);
+            child.setBackgroundColor(Color.TRANSPARENT);
+        }
+    }
+
+    private void removeExpense(Expense expense, String userAcc) {
+        // Remove the expense from the ExpenseBank
+        boolean removed = expenseBank.removeExpense(expense);
+
+        if (removed) {
+            Toast.makeText(this, "Expense removed successfully!", Toast.LENGTH_SHORT).show();
+
+            // Update the CSV file
+            expenseBank.saveExpensesToFile();
+
+            // Refresh the expense list
+            populateExpenseList(userAcc);
+        } else {
+            Toast.makeText(this, "Failed to remove the expense.", Toast.LENGTH_SHORT).show();
         }
     }
 

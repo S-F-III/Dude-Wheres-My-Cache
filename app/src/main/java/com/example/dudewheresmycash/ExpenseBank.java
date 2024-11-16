@@ -129,7 +129,7 @@ public class ExpenseBank {
         }
     }
 
-    public void removeUserExpense(String expenseID){
-
+    public boolean removeExpense(Expense expense) {
+        return expenses.remove(expense); // Remove from the ArrayList
     }
 }
