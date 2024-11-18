@@ -3,6 +3,7 @@ package com.example.dudewheresmycash;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,8 +35,17 @@ public class SettingsActivity extends AppCompatActivity {
         TextView settingsButton = findViewById(R.id.settingsButton);
         TextView monthlySpendingButton = findViewById(R.id.monthlySpendingButton);
         TextView signOutButton = findViewById(R.id.signOutButton);
+
+        Button clearBudgetButton = findViewById(R.id.clearBudgetDataButton);
+        Button exportDataButton = findViewById(R.id.exportDataButton);
+        Button noButton = findViewById(R.id.noButton);
+
+        clearBudgetButton.setOnClickListener(v -> findViewById(R.id.clearBudgetBox).setVisibility(View.VISIBLE));
+        exportDataButton.setOnClickListener(v -> findViewById(R.id.clearBudgetBox).setVisibility(View.VISIBLE));
+        noButton.setOnClickListener(v -> findViewById(R.id.clearBudgetBox).setVisibility(View.GONE));
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
+
         overviewButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
