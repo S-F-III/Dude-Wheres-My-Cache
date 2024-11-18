@@ -116,7 +116,7 @@
                     android:id="@+id/hamburgerMenu"
                     android:layout_width="300dp"
                     android:layout_height="500dp"
-                    android:background="#808080"
+                    android:background="#576F49"
                     android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent">
 
@@ -255,7 +255,7 @@
                     android:id="@+id/notificationAddBox"
                     android:layout_width="300dp"
                     android:layout_height="300dp"
-                    android:background="#808080"
+                    android:background="#576F49"
                     android:layout_gravity="center"
                     android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent">
@@ -328,7 +328,7 @@
                     android:id="@+id/notificationRemoveBox"
                     android:layout_width="300dp"
                     android:layout_height="300dp"
-                    android:background="#808080"
+                    android:background="#576F49"
                     android:layout_gravity="center"
                     android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent">

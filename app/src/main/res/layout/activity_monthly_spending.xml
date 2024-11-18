@@ -154,7 +154,7 @@
             android:id="@+id/hamburgerMenu"
             android:layout_width="300dp"
             android:layout_height="500dp"
-            android:background="#808080"
+            android:background="#576F49"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent">
 
