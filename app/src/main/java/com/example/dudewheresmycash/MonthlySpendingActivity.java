@@ -30,6 +30,48 @@ public class MonthlySpendingActivity extends AppCompatActivity {
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
 
+        overviewButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                launchOverview();
+            }
+        });
+        expenseButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                launchExpenses();
+            }
+        });
+        notificationButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                launchNotfications();
+            }
+        });
+        accountInfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchAccountInfo();
+            }
+        });
+        settingsButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                launchSettings();
+            }
+        });
+        monthlySpendingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchMonthlySpending();
+            }
+        });
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                launchSignOut();
+            }
+        });
 
 
         // Setup the ProgressBar chart
