@@ -45,6 +45,8 @@
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:backgroundTint="#89C18E"
+            android:textColor="#000000"
             android:text="@string/log_in_button" />
 
         <Button
@@ -52,6 +54,8 @@
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:backgroundTint="#89C18E"
+            android:textColor="#000000"
             android:text="@string/sign_up_button" />
 
     </LinearLayout>
