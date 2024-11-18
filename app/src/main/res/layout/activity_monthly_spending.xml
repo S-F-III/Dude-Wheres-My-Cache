@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/app_background"
     tools:context=".MonthlySpendingActivity">
 
     <FrameLayout
@@ -21,148 +22,166 @@
             android:focusable="true"
             app:srcCompat="@drawable/hamburger" />
 
-    <RelativeLayout
-        android:id="@+id/hamburgerMenu"
-        android:layout_width="300dp"
-        android:layout_height="500dp"
-        android:background="#808080"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent">
+        <RelativeLayout
+            android:id="@+id/hamburgerMenu"
+            android:layout_width="300dp"
+            android:layout_height="500dp"
+            android:background="#808080"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent">
 
-        <ImageView
-            android:id="@+id/hbMenu2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:clickable="true"
-            android:focusable="true"
-            app:srcCompat="@drawable/hamburger" />
+            <ImageView
+                android:id="@+id/hbMenu2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:clickable="true"
+                android:focusable="true"
+                app:srcCompat="@drawable/hamburger" />
+
+
+            <TextView
+                android:id="@+id/overviewButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:text="Overview"
+                android:textColor="#ffffff"
+                android:textSize="24sp" />
+
+
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/barChartLayout"
+            android:layout_width="409dp"
+            android:layout_height="422dp"
+            android:layout_marginTop="100dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+
+            <!-- September ProgressBar (65%) with Text -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Sep"
+                    android:textColor="#000000"
+                    android:textSize="17dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="$650"
+                    android:textColor="#000000"
+                    android:textSize="17dp" />
+
+                <ProgressBar
+                    android:id="@+id/bar1"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="174dp"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="65"
+                    android:progressDrawable="@drawable/blue" />
+            </LinearLayout>
+
+            <!-- October ProgressBar (76%) with Text -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Oct"
+                    android:textColor="#000000"
+                    android:textSize="17dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="$760"
+                    android:textColor="#000000"
+                    android:textSize="17dp" />
+
+                <ProgressBar
+                    android:id="@+id/bar2"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="205dp"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="76"
+                    android:progressDrawable="@drawable/red" />
+            </LinearLayout>
+
+            <!-- November ProgressBar (24%) with Text -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Nov"
+                    android:textColor="#000000"
+                    android:textSize="17dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="$240"
+                    android:textColor="#000000"
+                    android:textSize="17dp" />
+
+                <ProgressBar
+                    android:id="@+id/bar3"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="87dp"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="24"
+                    android:progressDrawable="@drawable/yellow" />
+            </LinearLayout>
+
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/overviewButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="79dp"
-            android:layout_marginEnd="174dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:fontFamily="monospace"
-            android:text="Overview"
-            android:textColor="#ffffff"
-            android:textSize="24sp" />
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:gravity="center"
+            android:text="Mothly Spending"
+            android:textColor="#000000"
+            android:textSize="30dp" />
 
-        <TextView
-            android:id="@+id/expenseButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/overviewButton"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="148dp"
-            android:fontFamily="monospace"
-            android:text="Expenses"
-            android:textColor="#ffffff"
-            android:clickable="true"
-            android:focusable="true"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/notificationButton"
-            android:layout_width="235dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/expenseButton"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="57dp"
-            android:fontFamily="monospace"
-            android:text="Notifications"
-            android:textColor="#ffffff"
-            android:clickable="true"
-            android:focusable="true"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/accountInfoButton"
-            android:layout_width="235dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/notificationButton"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="57dp"
-            android:fontFamily="monospace"
-            android:text="Account Info"
-            android:textColor="#ffffff"
-            android:clickable="true"
-            android:focusable="true"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/settingsButton"
-            android:layout_width="235dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/accountInfoButton"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="57dp"
-            android:fontFamily="monospace"
-            android:text="Settings"
-            android:textColor="#ffffff"
-            android:clickable="true"
-            android:focusable="true"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/monthlySpendingButton"
-            android:layout_width="235dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/settingsButton"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="57dp"
-            android:fontFamily="monospace"
-            android:text="Monthly Spending"
-            android:textColor="#ffffff"
-            android:clickable="true"
-            android:focusable="true"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/signOutButton"
-            android:layout_width="235dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/monthlySpendingButton"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginEnd="57dp"
-            android:fontFamily="monospace"
-            android:text="Sign Out"
-            android:textColor="#ffffff"
-            android:clickable="true"
-            android:focusable="true"
-            android:textSize="24sp" />
-
-
-    </RelativeLayout>
 
     </FrameLayout>
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
