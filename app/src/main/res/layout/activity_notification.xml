@@ -73,8 +73,10 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:text="+"
+                        android:backgroundTint="#89C18E"
+                        android:textColor="#000000"
                         android:textSize="24sp"
-                        android:textColor="@color/white"
+
 
                         android:layout_gravity="center_horizontal" />
                 </LinearLayout>
@@ -101,8 +103,9 @@
                     android:layout_width="60dp"
                     android:layout_height="60dp"
                     android:text="−"
+                    android:backgroundTint="#89C18E"
+                    android:textColor="#000000"
                     android:textSize="24sp"
-                    android:textColor="@color/white"
                     android:layout_gravity="center_horizontal" />
 
                 </LinearLayout>
