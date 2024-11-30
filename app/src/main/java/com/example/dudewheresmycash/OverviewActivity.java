@@ -11,6 +11,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,12 +28,15 @@ import androidx.core.view.WindowInsetsCompat;
 import org.w3c.dom.Text;
 
 import java.util.Calendar;
+import java.util.*;
+import java.io.*;
 
 public class OverviewActivity extends AppCompatActivity {
 
     private AccountManager accountManager;
     private UserAccount userAccount;
     private CategoryTracker categoryTracker;
+    PieChart pieChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +49,7 @@ public class OverviewActivity extends AppCompatActivity {
             return insets;
         });
 
+        pieChart = findViewById(R.id.pieChart);
        ImageView hbMenu = findViewById(R.id.hbMenu);
        ImageView hbMenu2 = findViewById(R.id.hbMenu2);
        TextView overviewButton = findViewById(R.id.overviewButton);
@@ -127,6 +137,7 @@ public class OverviewActivity extends AppCompatActivity {
         }
 
         dynamicCategorySetup();
+        createPieChart(this,100.00, pieChart);
 
     }
 
@@ -218,5 +229,55 @@ public class OverviewActivity extends AppCompatActivity {
             // Add the horizontal layout to the main category layout
             categoryLayoutMain.addView(categoryLayout);
         }
+    }
+
+    private void createPieChart(OverviewActivity activity, double total, PieChart pieChart){
+        // Create a pie chart
+        List<PieEntry> pieEntries = new ArrayList<>();
+        String fileName = "expense-list.csv";
+        // Access the internal storage file
+        File expenses = new File(activity.getFilesDir(), fileName);
+        try (BufferedReader br = new BufferedReader(new FileReader(expenses))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                String category = values[3]; // Assume category is in column 4
+                double value = Double.parseDouble(values[2]); // Assume value is in column 3
+
+                // Add the entry for this expense
+                pieEntries.add(new PieEntry((float) value, category));
+
+                // Subtract from the total
+                total = total - value;
+            }
+
+            // Add the remaining slice
+            if (total > 0) {
+                pieEntries.add(new PieEntry((float) total, "Remaining"));
+            }
+        } catch (IOException e) {
+            Log.e("PullExpenseData", "File Not Found");
+            e.printStackTrace();
+        }
+
+        // Create PieDataSet
+        PieDataSet dataSet = new PieDataSet(pieEntries, "Expenses");
+        dataSet.setColors(ColorTemplate.COLORFUL_COLORS); // Use default vibrant colors
+        dataSet.setValueTextSize(14f); // Text size for values
+
+
+        // Create PieData
+        PieData data = new PieData(dataSet);
+
+        // Configure the PieChart
+        pieChart.setData(data);
+        pieChart.setUsePercentValues(true); // Enable percentage display
+        pieChart.getDescription().setEnabled(false); // Remove chart description
+        pieChart.setDrawHoleEnabled(false); // Enable center hole
+        pieChart.setHoleRadius(30f); // Size of the hole
+        pieChart.setTransparentCircleRadius(40f); // Outer transparent circle
+        pieChart.setEntryLabelTextSize(12f); // Label text size
+        pieChart.getLegend().setEnabled(true); // Enable legend
+        pieChart.invalidate();
     }
 }

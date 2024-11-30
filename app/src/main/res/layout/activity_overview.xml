@@ -59,15 +59,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/overview_message" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/pieChart"
+                android:layout_width="380dp"
+                android:layout_height="440dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/budget_spent_amt"
-                app:srcCompat="@drawable/pie_chart">
+                app:layout_constraintVertical_bias="1.0" />
 
-            </ImageView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
