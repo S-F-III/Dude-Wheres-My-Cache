@@ -2,6 +2,7 @@ package com.example.dudewheresmycash;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -137,7 +138,7 @@ public class OverviewActivity extends AppCompatActivity {
         }
 
         dynamicCategorySetup();
-        createPieChart(this,100.00, pieChart);
+        createPieChart(this,Double.parseDouble(userAccount.getUserBudget()), pieChart, userAccount.getUserName());
 
     }
 
@@ -231,8 +232,9 @@ public class OverviewActivity extends AppCompatActivity {
         }
     }
 
-    private void createPieChart(OverviewActivity activity, double total, PieChart pieChart){
-        // Create a pie chart
+    private void createPieChart(OverviewActivity activity, double total, PieChart pieChart, String userID){
+        ArrayList<Expense> loading = new ArrayList<>();
+        ArrayList<Expense> totaled = new ArrayList<>();
         List<PieEntry> pieEntries = new ArrayList<>();
         String fileName = "expense-list.csv";
         // Access the internal storage file
@@ -241,20 +243,39 @@ public class OverviewActivity extends AppCompatActivity {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
-                String category = values[3]; // Assume category is in column 4
-                double value = Double.parseDouble(values[2]); // Assume value is in column 3
-
-                // Add the entry for this expense
-                pieEntries.add(new PieEntry((float) value, category));
-
-                // Subtract from the total
-                total = total - value;
+                String owner = values[1];
+                String category = values[3];
+                double value = Double.parseDouble(values[2]);
+                if (owner.equals(userID)) {
+                    loading.add(new Expense(owner, value, category));
+                    total = total - value;
+                }
             }
+            double temp = 0;
+            for(Expense x : loading) { if(x.getExpenseCategory().equals("Housing")) { temp = temp + x.getExpenseAmount(); } }
+            totaled.add(new Expense (userID, temp, "Housing"));
+            temp = 0;
+            for(Expense x : loading) { if(x.getExpenseCategory().equals("Transportation")) { temp = temp + x.getExpenseAmount(); } }
+            totaled.add(new Expense(userID, temp, "Transportation"));
+            temp = 0;
+            for(Expense x : loading) { if (x.getExpenseCategory().equals("Food")) { temp = temp + x.getExpenseAmount(); } }
+            totaled.add(new Expense (userID, temp, "Food"));
+            temp = 0;
+            for(Expense x : loading) { if(x.getExpenseCategory().equals("Insurance")) { temp = temp + x.getExpenseAmount(); } }
+            totaled.add(new Expense(userID, temp, "Insurance"));
+            temp = 0;
+            for(Expense x : loading) { if(x.getExpenseCategory().equals("Healthcare")) { temp = temp + x.getExpenseAmount(); } }
+            totaled.add(new Expense (userID, temp, "Healthcare"));
+            temp = 0;
+            for(Expense x : loading) { if(x.getExpenseCategory().equals("Entertainment")) { temp = temp + x.getExpenseAmount(); } }
+            totaled.add(new Expense(userID, temp, "Entertainment"));
+            temp = 0;
 
             // Add the remaining slice
-            if (total > 0) {
-                pieEntries.add(new PieEntry((float) total, "Remaining"));
+            for (Expense expense : totaled) {
+                pieEntries.add(new PieEntry((float) expense.getExpenseAmount()));
             }
+            if (total > 0) { pieEntries.add(new PieEntry((float) total, "")); }
         } catch (IOException e) {
             Log.e("PullExpenseData", "File Not Found");
             e.printStackTrace();
@@ -262,8 +283,9 @@ public class OverviewActivity extends AppCompatActivity {
 
         // Create PieDataSet
         PieDataSet dataSet = new PieDataSet(pieEntries, "Expenses");
-        dataSet.setColors(ColorTemplate.COLORFUL_COLORS); // Use default vibrant colors
-        dataSet.setValueTextSize(14f); // Text size for values
+        dataSet.setColors(new int[]{R.color.green, R.color.red, R.color.yellow, R.color.blue, R.color.orange, R.color.purple, R.color.white}, this);
+        dataSet.setValueTextSize(14f);
+        dataSet.setDrawValues(false);
 
 
         // Create PieData
@@ -271,13 +293,13 @@ public class OverviewActivity extends AppCompatActivity {
 
         // Configure the PieChart
         pieChart.setData(data);
-        pieChart.setUsePercentValues(true); // Enable percentage display
+        pieChart.setUsePercentValues(false); // Enable percentage display
         pieChart.getDescription().setEnabled(false); // Remove chart description
         pieChart.setDrawHoleEnabled(false); // Enable center hole
         pieChart.setHoleRadius(30f); // Size of the hole
         pieChart.setTransparentCircleRadius(40f); // Outer transparent circle
         pieChart.setEntryLabelTextSize(12f); // Label text size
-        pieChart.getLegend().setEnabled(true); // Enable legend
+        pieChart.getLegend().setEnabled(false); // Enable legend
         pieChart.invalidate();
     }
 }
