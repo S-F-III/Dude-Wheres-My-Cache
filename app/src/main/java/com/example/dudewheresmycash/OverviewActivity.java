@@ -28,12 +28,14 @@ import androidx.core.view.WindowInsetsCompat;
 
 import org.w3c.dom.Text;
 
+import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.*;
 import java.io.*;
 
 public class OverviewActivity extends AppCompatActivity {
 
+    private static final DecimalFormat df = new DecimalFormat("0.00");
     private AccountManager accountManager;
     private UserAccount userAccount;
     private CategoryTracker categoryTracker;
@@ -123,10 +125,10 @@ public class OverviewActivity extends AppCompatActivity {
             //displays a good morning message or good afternoon message with the user's name
             if (now.get(Calendar.HOUR_OF_DAY) < 12) {
                 TextView overviewMessage = findViewById(R.id.overview_message);
-                overviewMessage.setText("Good Morning " + userName);
+                overviewMessage.setText("Good Morning, " + "\n" + userName);
             } else {
                 TextView overviewMessage = findViewById(R.id.overview_message);
-                overviewMessage.setText("Good Afternoon " + userName);
+                overviewMessage.setText("Good Afternoon, " + "\n" + userName);
             }
 
             //displays the budget
@@ -209,7 +211,7 @@ public class OverviewActivity extends AppCompatActivity {
             String imageName = category.getCategoryColor().toLowerCase(); // Ensure this matches your image naming
             int imageResource = getResources().getIdentifier(imageName, "drawable", getPackageName());
             categoryImage.setImageResource(imageResource);
-            categoryImage.setLayoutParams(new LinearLayout.LayoutParams(50, 50)); // Set size for the image
+            categoryImage.setLayoutParams(new LinearLayout.LayoutParams(100, 100)); // Set size for the image
             categoryImage.setAdjustViewBounds(true); // Maintain aspect ratio
 
             // Create the TextView
@@ -219,13 +221,14 @@ public class OverviewActivity extends AppCompatActivity {
             int colorResource = getResources().getIdentifier(category.getCategoryColor(), "color", getPackageName());
             categoryName.setTextColor(ContextCompat.getColor(this, colorResource)); // OPTIONAL: Set the color to match category color
             categoryName.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    100));
             categoryName.setPadding(16, 0, 0, 0); // Optional padding to separate text from image
 
             // Add ImageView and TextView to the horizontal layout
             categoryLayout.addView(categoryImage);
             categoryLayout.addView(categoryName);
+            categoryLayout.setPadding(0,0,0,12);
 
             // Add the horizontal layout to the main category layout
             categoryLayoutMain.addView(categoryLayout);
@@ -237,6 +240,7 @@ public class OverviewActivity extends AppCompatActivity {
         ArrayList<Expense> totaled = new ArrayList<>();
         List<PieEntry> pieEntries = new ArrayList<>();
         String fileName = "expense-list.csv";
+        double startBudget = total; //need this to show correct color for amount spent at the bottom of this method
         // Access the internal storage file
         File expenses = new File(activity.getFilesDir(), fileName);
         try (BufferedReader br = new BufferedReader(new FileReader(expenses))) {
@@ -301,5 +305,20 @@ public class OverviewActivity extends AppCompatActivity {
         pieChart.setEntryLabelTextSize(12f); // Label text size
         pieChart.getLegend().setEnabled(false); // Enable legend
         pieChart.invalidate();
+
+        //Set Text View Displaying Total Spent
+        TextView userTotalSpent = findViewById(R.id.user_total_spent);
+        total = startBudget - total;
+        if(total > (startBudget * 0.75) && total < (startBudget)) {
+            userTotalSpent.setText("Total Spent: $" + df.format(total));
+            userTotalSpent.setTextColor(getResources().getColor(R. color. yellow)); //yellow means caution, almost at limit
+        }
+        else if(total >= startBudget){
+            userTotalSpent.setText("Total Spent: $" + df.format(total));
+            userTotalSpent.setTextColor(getResources().getColor(R. color. red)); //red means danger, at or above limit
+        }
+        else{
+            userTotalSpent.setText("Total Spent: $" + df.format(total));
+        }
     }
 }
