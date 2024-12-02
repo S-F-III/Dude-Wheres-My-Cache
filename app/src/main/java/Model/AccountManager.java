@@ -1,7 +1,6 @@
-package com.example.dudewheresmycash;
+package Model;
 
 import android.app.Activity;
-import android.content.res.AssetManager;
 import android.content.Context;
 import android.util.Log;
 

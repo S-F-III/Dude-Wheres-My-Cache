@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -25,7 +24,9 @@ import androidx.core.view.WindowInsetsCompat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
+
+import Model.Expense;
+import Model.ExpenseBank;
 
 public class ExpenseActivity extends AppCompatActivity {
 

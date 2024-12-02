@@ -14,6 +14,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import Model.AccountManager;
+import Model.UserAccount;
+
 public class SignUpActivity extends AppCompatActivity {
 
     private AccountManager accountManager;
