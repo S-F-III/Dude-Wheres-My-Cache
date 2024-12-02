@@ -184,7 +184,7 @@ public class ExpenseActivity extends AppCompatActivity {
         notificationButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                launchNotfications();
+                launchNotifications();
             }
         });
         accountInfoButton.setOnClickListener(new View.OnClickListener() {
@@ -361,7 +361,7 @@ public class ExpenseActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ExpenseActivity.class);
         startActivity(intent);
     }
-    private void launchNotfications() {
+    private void launchNotifications() {
         Intent intent = new Intent(this, NotificationActivity.class);
         startActivity(intent);
     }
