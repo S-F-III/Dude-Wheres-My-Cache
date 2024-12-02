@@ -138,7 +138,7 @@ public class OverviewActivity extends AppCompatActivity {
         }
 
         dynamicCategorySetup();
-        createPieChart(this,Double.parseDouble(userAccount.getUserBudget()), pieChart, userAccount.getUserName());
+        createPieChart(this,Double.parseDouble(userAccount.getUserBudget()), pieChart, userAccount.getUserID());
 
     }
 
