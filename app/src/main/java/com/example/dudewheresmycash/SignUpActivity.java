@@ -17,6 +17,9 @@ import androidx.core.view.WindowInsetsCompat;
 import Model.AccountManager;
 import Model.UserAccount;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 public class SignUpActivity extends AppCompatActivity {
 
     private AccountManager accountManager;
@@ -64,6 +67,12 @@ public class SignUpActivity extends AppCompatActivity {
                 SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("USER_ID", id); // Store the user ID here
+                // Check if the creation date is already stored
+                if (!sharedPreferences.contains("CREATION_DATE")) {
+                    // If not, save the current date as creation date
+                    String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    editor.putString("CREATION_DATE", currentDate);  // Store the account creation date
+                }
                 editor.apply();
 
                 //launch the OverviewActivity
