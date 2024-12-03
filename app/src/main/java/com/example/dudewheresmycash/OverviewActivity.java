@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -62,6 +63,9 @@ public class OverviewActivity extends AppCompatActivity {
        TextView settingsButton = findViewById(R.id.settingsButton);
        TextView monthlySpendingButton = findViewById(R.id.monthlySpendingButton);
        TextView signOutButton = findViewById(R.id.signOutButton);
+       Button okayButton = findViewById(R.id.okayButton);
+
+       okayButton.setOnClickListener(v -> findViewById(R.id.categoryDescription).setVisibility(View.GONE));
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
         overviewButton.setOnClickListener(new View.OnClickListener(){
@@ -217,6 +221,7 @@ public class OverviewActivity extends AppCompatActivity {
             // Create the TextView
             TextView categoryName = new TextView(this);
             categoryName.setText(category.getCategoryName());
+            categoryName.setTextSize(24);
             categoryName.setTypeface(null, Typeface.BOLD); // Make text bold
             int colorResource = getResources().getIdentifier(category.getCategoryColor(), "color", getPackageName());
             categoryName.setTextColor(ContextCompat.getColor(this, colorResource)); // OPTIONAL: Set the color to match category color
@@ -224,6 +229,15 @@ public class OverviewActivity extends AppCompatActivity {
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     100));
             categoryName.setPadding(16, 0, 0, 0); // Optional padding to separate text from image
+
+            categoryName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TextView description = findViewById(R.id.descriptionText);
+                    description.setText(category.getCategoryDescription());
+                    findViewById(R.id.categoryDescription).setVisibility(View.VISIBLE);
+                }
+            });
 
             // Add ImageView and TextView to the horizontal layout
             categoryLayout.addView(categoryImage);
