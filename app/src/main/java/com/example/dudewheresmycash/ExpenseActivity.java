@@ -22,6 +22,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
 import Model.Expense;
@@ -247,9 +248,15 @@ public class ExpenseActivity extends AppCompatActivity {
                             LinearLayout.LayoutParams.WRAP_CONTENT
                     ));
 
+
+                    YearMonth currentMonthYear = YearMonth.now();
+
+                    if (YearMonth.from(expense.getDate()).equals(currentMonthYear)) {
+                        expenseLayout.addView(expenseDescr);
+                        expenseLayout.addView(expenseDate);
+                    }
                     // Add both TextViews to the vertical layout
-                    expenseLayout.addView(expenseDescr);
-                    expenseLayout.addView(expenseDate);
+
 
                     // Add the vertical layout to the main expense layout
                     expenseLayoutMain.addView(expenseLayout);
