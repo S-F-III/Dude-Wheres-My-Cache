@@ -220,6 +220,7 @@ public class OverviewActivity extends AppCompatActivity {
             categoryImage.setImageResource(imageResource);
             categoryImage.setLayoutParams(new LinearLayout.LayoutParams(100, 100)); // Set size for the image
             categoryImage.setAdjustViewBounds(true); // Maintain aspect ratio
+            categoryImage.setPadding(22, 0, 0, 0);
 
             // Create the TextView
             TextView categoryName = new TextView(this);
