@@ -23,6 +23,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
 import Model.Expense;
@@ -198,6 +199,7 @@ public class NotificationActivity extends AppCompatActivity {
                     String notificationInfo = x.getTitle();
                     notificationDescr.setText(notificationInfo);
                     notificationDescr.setTextSize(48);
+                    notificationDescr.setGravity(Gravity.CENTER);
                     notificationDescr.setTextColor(Color.BLACK);
                     notificationDescr.setTypeface(null, Typeface.BOLD); // Make text bold
                     notificationDescr.setLayoutParams(new LinearLayout.LayoutParams(
@@ -215,9 +217,12 @@ public class NotificationActivity extends AppCompatActivity {
                             LinearLayout.LayoutParams.WRAP_CONTENT));
                      notificationDate.setPadding(0, 0, 0, 16); // Optional padding to separate bottom of entry to top of next
 
+                    YearMonth currentMonthYear = YearMonth.now();
 
-                    notificationLayout.addView(notificationDescr);
-                    notificationLayout.addView(notificationDate);
+                    if (YearMonth.from(x.getDate()).equals(currentMonthYear)) {
+                        notificationLayout.addView(notificationDescr);
+                        notificationLayout.addView(notificationDate);
+                    }
 
 
                     notificationLayoutMain.addView(notificationLayout);
