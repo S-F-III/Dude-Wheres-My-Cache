@@ -1,4 +1,4 @@
-package com.example.dudewheresmycash;
+package Model;
 
 public class Category {
     private String categoryName;

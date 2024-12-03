@@ -1,4 +1,4 @@
-package com.example.dudewheresmycash;
+package Model;
 
 public class UserAccount {
     private String userID;

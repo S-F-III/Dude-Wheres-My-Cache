@@ -1,6 +1,8 @@
-package com.example.dudewheresmycash;
+package Model;
 
 import android.content.res.AssetManager;
+
+import com.example.dudewheresmycash.OverviewActivity;
 
 import java.io.IOException;
 import java.io.InputStream;

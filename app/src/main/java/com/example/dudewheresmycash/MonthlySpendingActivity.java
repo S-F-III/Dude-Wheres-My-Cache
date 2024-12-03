@@ -4,26 +4,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class MonthlySpendingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_monthly_spending);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
 
         ImageView hbMenu = findViewById(R.id.hbMenu);
         ImageView hbMenu2 = findViewById(R.id.hbMenu2);
@@ -34,8 +26,10 @@ public class MonthlySpendingActivity extends AppCompatActivity {
         TextView settingsButton = findViewById(R.id.settingsButton);
         TextView monthlySpendingButton = findViewById(R.id.monthlySpendingButton);
         TextView signOutButton = findViewById(R.id.signOutButton);
+
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
+
         overviewButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -78,7 +72,25 @@ public class MonthlySpendingActivity extends AppCompatActivity {
                 launchSignOut();
             }
         });
+
+
+        // Setup the ProgressBar chart
+        ProgressBar bar1 = findViewById(R.id.bar1);
+        ProgressBar bar2 = findViewById(R.id.bar2);
+        ProgressBar bar3 = findViewById(R.id.bar3);
+
+
+
+        int[] data = {50, 75, 60};
+
+
+        bar1.setProgress(data[0]);
+        bar2.setProgress(data[1]);
+        bar3.setProgress(data[2]);
+
+
     }
+
 
     private void launchHBMenu(){
         Intent intent = new Intent(this, HamburgerActivity.class);

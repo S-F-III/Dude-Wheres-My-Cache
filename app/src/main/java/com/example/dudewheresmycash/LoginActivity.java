@@ -14,6 +14,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import Model.AccountManager;
+import Model.UserAccount;
+
 public class LoginActivity extends AppCompatActivity {
 
     private AccountManager accountManager;
@@ -35,6 +38,9 @@ public class LoginActivity extends AppCompatActivity {
         EditText inputUserID = (EditText) findViewById(R.id.inputUserID);
         EditText inputUserPassword = (EditText) findViewById(R.id.inputPassword);
         Button nextButton = findViewById(R.id.next_button);
+        Button cancelButton = findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(v -> launchWelcome());
+
 
         nextButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -73,6 +79,11 @@ public class LoginActivity extends AppCompatActivity {
         else{
             Toast.makeText(this, "current account not found", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void launchWelcome() {
+        Intent intent = new Intent(this, WelcomeActivity.class);
+        startActivity(intent);
     }
 
 }

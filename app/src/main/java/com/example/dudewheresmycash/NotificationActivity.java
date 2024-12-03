@@ -1,11 +1,20 @@
 package com.example.dudewheresmycash;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +22,18 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import Model.Expense;
+import Model.ExpenseBank;
+import Model.Notification;
+import Model.NotificationBank;
+
 public class NotificationActivity extends AppCompatActivity {
+
+    private NotificationBank notificationBank;
+    private Notification notification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +45,10 @@ public class NotificationActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("USER_ID", null);
+
+        dynamicNotificationSetup(userId);
 
         ImageView hbMenu = findViewById(R.id.hbMenu);
         ImageView hbMenu2 = findViewById(R.id.hbMenu2);
@@ -44,10 +68,65 @@ public class NotificationActivity extends AppCompatActivity {
         //For the overlays
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
-        addNotificationButton.setOnClickListener(v -> findViewById(R.id.notificationAddBox).setVisibility(View.VISIBLE));
-        cancelAddButton.setOnClickListener(v -> findViewById(R.id.notificationAddBox).setVisibility(View.GONE));
-        removeNotificationButton.setOnClickListener(v -> findViewById(R.id.notificationRemoveBox).setVisibility(View.VISIBLE));
-        cancelRemoveButton.setOnClickListener(v -> findViewById(R.id.notificationRemoveBox).setVisibility(View.GONE));
+
+        TextView submitAddButton = findViewById(R.id.submitAddButton);
+        addNotificationButton.setOnClickListener(v -> {
+            findViewById(R.id.notificationAddBox).setVisibility(View.VISIBLE);
+
+            submitAddButton.setOnClickListener(doneView -> {
+                EditText titleInput = findViewById(R.id.inputNotificationTitle);
+                EditText dateInput = findViewById(R.id.inputNotificationDate);
+
+                String title = titleInput.getText().toString().trim();
+                String dateText = dateInput.getText().toString().trim();
+                if (dateText.isEmpty() || title.isEmpty()) {
+                    Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate date = LocalDate.parse(dateText, formatter);
+
+                    Notification newNotification = new Notification(title, date, userId);
+
+                    notificationBank.addUserNotification(newNotification);
+                    notificationBank.saveNotificationToFile();
+
+                    titleInput.setText("");
+                    dateInput.setText("");
+                    dynamicNotificationSetup(userId);
+                    findViewById(R.id.notificationAddBox).setVisibility(View.GONE);
+
+
+                    Toast.makeText(this, "Notification added successfully!", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(this, "Invalid input format.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        cancelAddButton.setOnClickListener(v ->
+        {
+            findViewById(R.id.notificationAddBox).setVisibility(View.GONE);
+
+            EditText titleInput = findViewById(R.id.inputNotificationTitle);
+            EditText dateInput = findViewById(R.id.inputNotificationDate);
+
+            titleInput.setText("");
+            dateInput.setText("");
+
+            findViewById(R.id.notificationAddBox).setVisibility(View.GONE);
+        });
+
+        removeNotificationButton.setOnClickListener(v -> {
+                    findViewById(R.id.notificationRemoveBox).setVisibility(View.VISIBLE);
+            populateNotificationList(userId);
+            Toast.makeText(this, "Select a notification to remove", Toast.LENGTH_SHORT).show();
+        });
+        cancelRemoveButton.setOnClickListener(v -> {
+                findViewById(R.id.notificationRemoveBox).setVisibility(View.GONE);
+            dynamicNotificationSetup(userId);
+        });
 
         overviewButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -91,6 +170,125 @@ public class NotificationActivity extends AppCompatActivity {
                 launchSignOut();
             }
         });
+    }
+
+    private void dynamicNotificationSetup(String userAcc){
+
+        createNotificationList();
+
+        if(notificationBank != null){
+            LinearLayout notificationLayoutMain = findViewById(R.id.notification_layout);
+            notificationLayoutMain.removeAllViews(); // Clear any previous data before adding new views
+
+            for(Notification x : notificationBank.getNotifications()){
+                Log.e("NotificationActivity", "Owner: " + x.getOwner());
+                if(x.getOwner().equals(userAcc)) {
+                    Log.d("NotificationActivity", "Adding notification: " + x.getTitle() );
+
+
+                    LinearLayout notificationLayout = new LinearLayout(this);
+                    notificationLayout.setOrientation(LinearLayout.VERTICAL);
+                    notificationLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT));
+                    notificationLayout.setGravity(Gravity.CENTER);
+
+
+                    TextView notificationDescr = new TextView(this);
+                    String notificationInfo = x.getTitle();
+                    notificationDescr.setText(notificationInfo);
+                    notificationDescr.setTextSize(48);
+                    notificationDescr.setTextColor(Color.BLACK);
+                    notificationDescr.setTypeface(null, Typeface.BOLD); // Make text bold
+                    notificationDescr.setLayoutParams(new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT));
+                    notificationDescr.setPadding(0, 0, 0, 8); // Optional padding to separate description from date
+
+
+                    TextView notificationDate = new TextView(this);
+                    notificationDate.setText(String.valueOf(x.getDate()));
+                    notificationDate.setTextSize(24);
+                    notificationDate.setTextColor(Color.BLACK);
+                    notificationDate.setLayoutParams(new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT));
+                     notificationDate.setPadding(0, 0, 0, 16); // Optional padding to separate bottom of entry to top of next
+
+
+                    notificationLayout.addView(notificationDescr);
+                    notificationLayout.addView(notificationDate);
+
+
+                    notificationLayoutMain.addView(notificationLayout);
+                }
+            }
+        }
+        else{
+            Toast.makeText(this, "No notifications found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void createNotificationList(){
+        notificationBank = new NotificationBank(this);
+        notificationBank.initializeNotificationList();
+    }
+
+    private void populateNotificationList(String userAcc) {
+        LinearLayout notificationListContainer = findViewById(R.id.removeNotification_layout);
+        TextView removeSelectedNotificationButton = findViewById(R.id.submitRemoveButton);
+        notificationListContainer.removeAllViews(); // Clear existing views
+
+        if (notificationBank != null) {
+            Log.d("populateNotificationList", "Total Notifications: " + notificationBank.getNotifications().size());
+            for(Notification x : notificationBank.getNotifications()) {
+                Log.d("populateNotificationList", "Owner: " + x.getOwner());
+                if (x.getOwner().equals(userAcc)) {
+                    Log.d("populateNotificationList", "Matching Notifications ");
+
+                    Button notificationButton = new Button(this);
+                    notificationButton.setText(x.getTitle());
+                    notificationButton.setTag(x);
+                    notificationButton.setOnClickListener(v -> {
+                        // Highlight the selected button
+                        clearSelections(notificationListContainer);
+                        notificationButton.setBackgroundColor(Color.LTGRAY);
+                        removeSelectedNotificationButton.setVisibility(View.VISIBLE);
+
+                        removeSelectedNotificationButton.setOnClickListener(removeView -> {
+                            removeNotification((Notification) notificationButton.getTag(), userAcc);
+                        });
+                    });
+
+                    notificationListContainer.addView(notificationButton);
+                }
+            }
+        }
+        else {
+            Log.e("populateExpenseList", "ExpenseBank is null!");
+            Toast.makeText(this, "No expenses found for this user.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void removeNotification(Notification notification, String userAcc) {
+        // Remove the expense from the ExpenseBank
+        boolean removed = notificationBank.removeNotification(notification);
+
+        if (removed) {
+            Toast.makeText(this, "Notification removed successfully!", Toast.LENGTH_SHORT).show();
+
+            // Update the CSV file
+            notificationBank.saveNotificationToFile();
+
+            populateNotificationList(userAcc);
+        } else {
+            Toast.makeText(this, "Failed to remove the expense.", Toast.LENGTH_SHORT).show();
+        }
+    }
+    private void clearSelections(LinearLayout container) {
+        for (int i = 0; i < container.getChildCount(); i++) {
+            View child = container.getChildAt(i);
+            child.setBackgroundColor(Color.TRANSPARENT);
+        }
     }
     private void launchOverview() {
         Intent intent = new Intent(this, OverviewActivity.class);

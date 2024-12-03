@@ -11,6 +11,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,15 +23,24 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import org.w3c.dom.Text;
-
+import java.text.DecimalFormat;
 import java.util.Calendar;
+import java.util.*;
+import java.io.*;
+
+import Model.AccountManager;
+import Model.Category;
+import Model.CategoryTracker;
+import Model.Expense;
+import Model.UserAccount;
 
 public class OverviewActivity extends AppCompatActivity {
 
+    private static final DecimalFormat df = new DecimalFormat("0.00");
     private AccountManager accountManager;
     private UserAccount userAccount;
     private CategoryTracker categoryTracker;
+    PieChart pieChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +53,7 @@ public class OverviewActivity extends AppCompatActivity {
             return insets;
         });
 
+        pieChart = findViewById(R.id.pieChart);
        ImageView hbMenu = findViewById(R.id.hbMenu);
        ImageView hbMenu2 = findViewById(R.id.hbMenu2);
        TextView overviewButton = findViewById(R.id.overviewButton);
@@ -49,6 +63,9 @@ public class OverviewActivity extends AppCompatActivity {
        TextView settingsButton = findViewById(R.id.settingsButton);
        TextView monthlySpendingButton = findViewById(R.id.monthlySpendingButton);
        TextView signOutButton = findViewById(R.id.signOutButton);
+       Button okayButton = findViewById(R.id.okayButton);
+
+       okayButton.setOnClickListener(v -> findViewById(R.id.categoryDescription).setVisibility(View.GONE));
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
         overviewButton.setOnClickListener(new View.OnClickListener(){
@@ -112,10 +129,10 @@ public class OverviewActivity extends AppCompatActivity {
             //displays a good morning message or good afternoon message with the user's name
             if (now.get(Calendar.HOUR_OF_DAY) < 12) {
                 TextView overviewMessage = findViewById(R.id.overview_message);
-                overviewMessage.setText("Good Morning " + userName);
+                overviewMessage.setText("Good Morning, " + "\n" + userName);
             } else {
                 TextView overviewMessage = findViewById(R.id.overview_message);
-                overviewMessage.setText("Good Afternoon " + userName);
+                overviewMessage.setText("Good Afternoon, " + "\n" + userName);
             }
 
             //displays the budget
@@ -127,6 +144,7 @@ public class OverviewActivity extends AppCompatActivity {
         }
 
         dynamicCategorySetup();
+        createPieChart(this,Double.parseDouble(userAccount.getUserBudget()), pieChart, userAccount.getUserID());
 
     }
 
@@ -197,26 +215,124 @@ public class OverviewActivity extends AppCompatActivity {
             String imageName = category.getCategoryColor().toLowerCase(); // Ensure this matches your image naming
             int imageResource = getResources().getIdentifier(imageName, "drawable", getPackageName());
             categoryImage.setImageResource(imageResource);
-            categoryImage.setLayoutParams(new LinearLayout.LayoutParams(50, 50)); // Set size for the image
+            categoryImage.setLayoutParams(new LinearLayout.LayoutParams(100, 100)); // Set size for the image
             categoryImage.setAdjustViewBounds(true); // Maintain aspect ratio
 
             // Create the TextView
             TextView categoryName = new TextView(this);
             categoryName.setText(category.getCategoryName());
+            categoryName.setTextSize(24);
             categoryName.setTypeface(null, Typeface.BOLD); // Make text bold
             int colorResource = getResources().getIdentifier(category.getCategoryColor(), "color", getPackageName());
             categoryName.setTextColor(ContextCompat.getColor(this, colorResource)); // OPTIONAL: Set the color to match category color
             categoryName.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    100));
             categoryName.setPadding(16, 0, 0, 0); // Optional padding to separate text from image
+
+            categoryName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    TextView description = findViewById(R.id.descriptionText);
+                    description.setText(category.getCategoryDescription());
+                    findViewById(R.id.categoryDescription).setVisibility(View.VISIBLE);
+                }
+            });
 
             // Add ImageView and TextView to the horizontal layout
             categoryLayout.addView(categoryImage);
             categoryLayout.addView(categoryName);
+            categoryLayout.setPadding(0,0,0,12);
 
             // Add the horizontal layout to the main category layout
             categoryLayoutMain.addView(categoryLayout);
+        }
+    }
+
+    private void createPieChart(OverviewActivity activity, double total, PieChart pieChart, String userID){
+        ArrayList<Expense> loading = new ArrayList<>();
+        ArrayList<Expense> totaled = new ArrayList<>();
+        List<PieEntry> pieEntries = new ArrayList<>();
+        String fileName = "expense-list.csv";
+        double startBudget = total; //need this to show correct color for amount spent at the bottom of this method
+        // Access the internal storage file
+        File expenses = new File(activity.getFilesDir(), fileName);
+        try (BufferedReader br = new BufferedReader(new FileReader(expenses))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                String owner = values[1];
+                String category = values[3];
+                double value = Double.parseDouble(values[2]);
+                if (owner.equals(userID)) {
+                    loading.add(new Expense(owner, value, category));
+                    total = total - value;
+                }
+            }
+            double temp = 0;
+            for(Expense x : loading) { if(x.getExpenseCategory().equals("Housing")) { temp = temp + x.getExpenseAmount(); } }
+            totaled.add(new Expense (userID, temp, "Housing"));
+            temp = 0;
+            for(Expense x : loading) { if(x.getExpenseCategory().equals("Transportation")) { temp = temp + x.getExpenseAmount(); } }
+            totaled.add(new Expense(userID, temp, "Transportation"));
+            temp = 0;
+            for(Expense x : loading) { if (x.getExpenseCategory().equals("Food")) { temp = temp + x.getExpenseAmount(); } }
+            totaled.add(new Expense (userID, temp, "Food"));
+            temp = 0;
+            for(Expense x : loading) { if(x.getExpenseCategory().equals("Insurance")) { temp = temp + x.getExpenseAmount(); } }
+            totaled.add(new Expense(userID, temp, "Insurance"));
+            temp = 0;
+            for(Expense x : loading) { if(x.getExpenseCategory().equals("Healthcare")) { temp = temp + x.getExpenseAmount(); } }
+            totaled.add(new Expense (userID, temp, "Healthcare"));
+            temp = 0;
+            for(Expense x : loading) { if(x.getExpenseCategory().equals("Entertainment")) { temp = temp + x.getExpenseAmount(); } }
+            totaled.add(new Expense(userID, temp, "Entertainment"));
+            temp = 0;
+
+            // Add the remaining slice
+            for (Expense expense : totaled) {
+                pieEntries.add(new PieEntry((float) expense.getExpenseAmount()));
+            }
+            if (total > 0) { pieEntries.add(new PieEntry((float) total, "")); }
+        } catch (IOException e) {
+            Log.e("PullExpenseData", "File Not Found");
+            e.printStackTrace();
+        }
+
+        // Create PieDataSet
+        PieDataSet dataSet = new PieDataSet(pieEntries, "Expenses");
+        dataSet.setColors(new int[]{R.color.green, R.color.red, R.color.yellow, R.color.blue, R.color.orange, R.color.purple, R.color.white}, this);
+        dataSet.setValueTextSize(14f);
+        dataSet.setDrawValues(false);
+
+
+        // Create PieData
+        PieData data = new PieData(dataSet);
+
+        // Configure the PieChart
+        pieChart.setData(data);
+        pieChart.setUsePercentValues(false); // Enable percentage display
+        pieChart.getDescription().setEnabled(false); // Remove chart description
+        pieChart.setDrawHoleEnabled(false); // Enable center hole
+        pieChart.setHoleRadius(30f); // Size of the hole
+        pieChart.setTransparentCircleRadius(40f); // Outer transparent circle
+        pieChart.setEntryLabelTextSize(12f); // Label text size
+        pieChart.getLegend().setEnabled(false); // Enable legend
+        pieChart.invalidate();
+
+        //Set Text View Displaying Total Spent
+        TextView userTotalSpent = findViewById(R.id.user_total_spent);
+        total = startBudget - total;
+        if(total > (startBudget * 0.75) && total < (startBudget)) {
+            userTotalSpent.setText("Total Spent: $" + df.format(total));
+            userTotalSpent.setTextColor(getResources().getColor(R. color. yellow)); //yellow means caution, almost at limit
+        }
+        else if(total >= startBudget){
+            userTotalSpent.setText("Total Spent: $" + df.format(total));
+            userTotalSpent.setTextColor(getResources().getColor(R. color. red)); //red means danger, at or above limit
+        }
+        else{
+            userTotalSpent.setText("Total Spent: $" + df.format(total));
         }
     }
 }

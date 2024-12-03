@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -25,7 +24,9 @@ import androidx.core.view.WindowInsetsCompat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
+
+import Model.Expense;
+import Model.ExpenseBank;
 
 public class ExpenseActivity extends AppCompatActivity {
 
@@ -183,7 +184,7 @@ public class ExpenseActivity extends AppCompatActivity {
         notificationButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                launchNotfications();
+                launchNotifications();
             }
         });
         accountInfoButton.setOnClickListener(new View.OnClickListener() {
@@ -360,7 +361,7 @@ public class ExpenseActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ExpenseActivity.class);
         startActivity(intent);
     }
-    private void launchNotfications() {
+    private void launchNotifications() {
         Intent intent = new Intent(this, NotificationActivity.class);
         startActivity(intent);
     }

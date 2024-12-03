@@ -1,8 +1,10 @@
 package com.example.dudewheresmycash;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -78,6 +80,53 @@ public class AccountInfoActivity extends AppCompatActivity {
                 launchSignOut();
             }
         });
+
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("USER_ID", null);
+
+        Button changeNameButton = findViewById(R.id.changeNameButton);
+        Button changePasswordButton = findViewById(R.id.changePasswordButton);
+        Button changeBudgetButton = findViewById(R.id.changeBudgetButton);
+
+        TextView displayUserID = findViewById(R.id.showCurrentUser);
+        displayUserID.setText("Current User: " + userId);
+
+        changeNameButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                launchNameActivity();
+            }
+        });
+
+        changePasswordButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                launchPasswordActivity();
+            }
+        });
+
+        changeBudgetButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                launchBudgetActivity();
+            }
+        });
+
+    }
+
+    private void launchNameActivity(){
+        Intent intent = new Intent(this, NameActivity.class);
+        startActivity(intent);
+    }
+
+    private void launchPasswordActivity(){
+        Intent intent = new Intent(this, PasswordActivity.class);
+        startActivity(intent);
+    }
+
+    private void launchBudgetActivity(){
+        Intent intent = new Intent(this, BudgetActivity.class);
+        startActivity(intent);
     }
 
     private void launchOverview() {
@@ -105,6 +154,9 @@ public class AccountInfoActivity extends AppCompatActivity {
         startActivity(intent);
     }
     private void launchSignOut() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        sharedPreferences.edit().remove("USER_ID").apply();
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
