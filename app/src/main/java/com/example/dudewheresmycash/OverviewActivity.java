@@ -24,6 +24,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.*;
 import java.io.*;
@@ -250,50 +253,59 @@ public class OverviewActivity extends AppCompatActivity {
     }
 
     private void createPieChart(OverviewActivity activity, double total, PieChart pieChart, String userID){
+        createCategoryList();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         ArrayList<Expense> loading = new ArrayList<>();
         ArrayList<Expense> totaled = new ArrayList<>();
+        ArrayList<Expense> filteredExpenses = new ArrayList<>();
         List<PieEntry> pieEntries = new ArrayList<>();
         String fileName = "expense-list.csv";
         double startBudget = total; //need this to show correct color for amount spent at the bottom of this method
-        // Access the internal storage file
+
         File expenses = new File(activity.getFilesDir(), fileName);
-        try (BufferedReader br = new BufferedReader(new FileReader(expenses))) {
+        try (BufferedReader read = new BufferedReader(new FileReader(expenses))) {
             String line;
-            while ((line = br.readLine()) != null) {
+            while ((line = read.readLine()) != null) {
                 String[] values = line.split(",");
                 String owner = values[1];
                 String category = values[3];
+                LocalDate date = LocalDate.parse(values[5].trim(), formatter);
                 double value = Double.parseDouble(values[2]);
                 if (owner.equals(userID)) {
-                    loading.add(new Expense(owner, value, category));
-                    total = total - value;
+                    loading.add(new Expense(owner, value, category, date));
                 }
             }
-            double temp = 0;
-            for(Expense x : loading) { if(x.getExpenseCategory().equals("Housing")) { temp = temp + x.getExpenseAmount(); } }
-            totaled.add(new Expense (userID, temp, "Housing"));
-            temp = 0;
-            for(Expense x : loading) { if(x.getExpenseCategory().equals("Transportation")) { temp = temp + x.getExpenseAmount(); } }
-            totaled.add(new Expense(userID, temp, "Transportation"));
-            temp = 0;
-            for(Expense x : loading) { if (x.getExpenseCategory().equals("Food")) { temp = temp + x.getExpenseAmount(); } }
-            totaled.add(new Expense (userID, temp, "Food"));
-            temp = 0;
-            for(Expense x : loading) { if(x.getExpenseCategory().equals("Insurance")) { temp = temp + x.getExpenseAmount(); } }
-            totaled.add(new Expense(userID, temp, "Insurance"));
-            temp = 0;
-            for(Expense x : loading) { if(x.getExpenseCategory().equals("Healthcare")) { temp = temp + x.getExpenseAmount(); } }
-            totaled.add(new Expense (userID, temp, "Healthcare"));
-            temp = 0;
-            for(Expense x : loading) { if(x.getExpenseCategory().equals("Entertainment")) { temp = temp + x.getExpenseAmount(); } }
-            totaled.add(new Expense(userID, temp, "Entertainment"));
-            temp = 0;
+
+            for (Category category : categoryTracker.getCategories()) {
+                String currentCategory = category.getCategoryName();
+                double temp = 0;
+                LocalDate date = LocalDate.now();
+                YearMonth currentMonthYear = YearMonth.now();
+
+                // Sum all expenses under the current category
+                for (Expense x : loading) {
+                    if (x.getExpenseCategory().equals(currentCategory) && YearMonth.from(x.getDate()).equals(currentMonthYear)) {
+                        temp += x.getExpenseAmount();
+                        date = x.getDate();
+                        Log.i("PullExpenseData", "Date: " + date);
+                    }
+                }
+                // Add the totaled expense for this category to the list
+                if (currentCategory.equals("Unspent")) {}
+                else if (date != null) { totaled.add(new Expense(userID, temp, currentCategory)); }
+            }
+
+            Log.i("PullExpenseData", "Number of Categories: " + totaled.size());
+
+
 
             // Add the remaining slice
             for (Expense expense : totaled) {
+                Log.i("PullExpenseData", "Expense: " + expense.getExpenseAmount() + "for " + expense.getExpenseCategory());
+                total -= expense.getExpenseAmount();
                 pieEntries.add(new PieEntry((float) expense.getExpenseAmount()));
             }
-            if (total > 0) { pieEntries.add(new PieEntry((float) total, "")); }
+            if (total > 0) { pieEntries.add(new PieEntry((float) total)); }
         } catch (IOException e) {
             Log.e("PullExpenseData", "File Not Found");
             e.printStackTrace();

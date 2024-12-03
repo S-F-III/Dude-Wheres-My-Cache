@@ -20,6 +20,13 @@ public class Expense {
         this.date = date;
         this.isRecurring = isRecurring;
     }
+    public Expense(String expenseOwner, double expenseAmount, String expenseCategory, LocalDate date) {
+        this.expenseOwner = expenseOwner;
+        this.expenseAmount = expenseAmount;
+        this.expenseCategory = expenseCategory;
+        this.date = date;
+    }
+
     public Expense(String expenseOwner, double expenseAmount, String expenseCategory) {
         this.expenseOwner = expenseOwner;
         this.expenseAmount = expenseAmount;
