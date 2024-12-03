@@ -35,10 +35,10 @@ public class ExpenseBank {
         this.expenses = expenses;
     }
 
-    //finds an expense that belongs to a specified user
-    public Expense findExpenseByOwner(String userID){
+    //Finds an expense using specific expenseID
+    public Expense getExpenseByID(String expenseID, String userID){
         for (Expense expense : expenses){
-            if(expense.getExpenseOwner().equals(userID)){
+            if(expense.getExpenseOwner().equals(userID) && expense.getExpenseID() == Integer.parseInt(expenseID)){
                 return expense;
             }
         }

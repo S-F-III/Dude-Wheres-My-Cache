@@ -77,4 +77,8 @@ public class Expense {
     public boolean isRecurring() {
         return isRecurring;
     }
+
+    public void setRecurring(boolean recurring) {
+        isRecurring = recurring;
+    }
 }

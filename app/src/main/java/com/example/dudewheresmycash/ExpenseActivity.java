@@ -23,7 +23,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 
 import Model.Expense;
 import Model.ExpenseBank;
@@ -70,10 +69,6 @@ public class ExpenseActivity extends AppCompatActivity {
         TextView cancelSelectedModifyExpenseButton = findViewById(R.id.cancelSelectedModifyExpenseButton);
 
 
-        modifyExpenseButton.setOnClickListener(v -> findViewById(R.id.modifyExpenseOverlay).setVisibility(View.VISIBLE));
-        cancelModifyExpenseButton.setOnClickListener(v -> findViewById(R.id.modifyExpenseOverlay).setVisibility(View.GONE));
-        modifySelectedExpenseButton.setOnClickListener(v -> findViewById(R.id.modifySelectedExpenseOverlay).setVisibility(View.VISIBLE));
-        cancelSelectedModifyExpenseButton.setOnClickListener(v -> findViewById(R.id.modifySelectedExpenseOverlay).setVisibility(View.GONE));
 
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
@@ -81,63 +76,7 @@ public class ExpenseActivity extends AppCompatActivity {
         addExpenseButton.setOnClickListener(v -> {
             // Show the overlay
             findViewById(R.id.addExpenseOverlay).setVisibility(View.VISIBLE);
-
-            Button doneButton = findViewById(R.id.doneAddExpenseButton); // Button in overlay
-            doneButton.setOnClickListener(doneView -> {
-                // Retrieve input values
-                EditText amountInput = findViewById(R.id.inputExpenseAmount);
-                EditText categoryInput = findViewById(R.id.inputExpenseCategory);
-                EditText descriptionInput = findViewById(R.id.inputExpenseDescription);
-                EditText dateInput = findViewById(R.id.inputExpenseDate);
-                CheckBox recurringCheckBox = findViewById(R.id.isRecurringAdd);
-
-                // Validate inputs
-                String amountText = amountInput.getText().toString().trim();
-                String category = categoryInput.getText().toString().trim();
-                String description = descriptionInput.getText().toString().trim();
-                String dateText = dateInput.getText().toString().trim();
-                boolean isRecurring = recurringCheckBox.isChecked();
-
-                if (amountText.isEmpty() || category.isEmpty() || description.isEmpty() || dateText.isEmpty()) {
-                    Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                try {
-                    // Parse inputs
-                    double amount = Double.parseDouble(amountText);
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    LocalDate date = LocalDate.parse(dateText, formatter);
-
-                    // Create the Expense object
-                    Expense newExpense = new Expense(
-                            getNextAvailableID(userId), // Assume ID is auto-incremented or managed elsewhere
-                            userId, // Current user's ID from SharedPreferences
-                            amount,
-                            category,
-                            description,
-                            date,
-                            isRecurring
-                    );
-
-                    // Save to CSV
-                    expenseBank.addUserExpense(newExpense);
-                    expenseBank.saveExpensesToFile();
-
-                    // Clear input fields and hide overlay
-                    amountInput.setText("");
-                    categoryInput.setText("");
-                    descriptionInput.setText("");
-                    dateInput.setText("");
-                    recurringCheckBox.setChecked(false);
-                    findViewById(R.id.addExpenseOverlay).setVisibility(View.GONE);
-                    dynamicExpenseSetup(userId);
-
-                    Toast.makeText(this, "Expense added successfully!", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    Toast.makeText(this, "Invalid input format.", Toast.LENGTH_SHORT).show();
-                }
-            });
+            populateAddExpenseOverlay(userId);
         });
 
         cancelAddExpenseButton.setOnClickListener(v -> {
@@ -160,12 +99,39 @@ public class ExpenseActivity extends AppCompatActivity {
 
         removeExpenseButton.setOnClickListener(v -> {
             findViewById(R.id.removeExpenseOverlay).setVisibility(View.VISIBLE);
-            populateExpenseList(userId);
+            populateRemoveExpenseList(userId);
         });
 
         cancelRemoveExpenseButton.setOnClickListener(v -> {
             findViewById(R.id.removeExpenseOverlay).setVisibility(View.GONE);
             dynamicExpenseSetup(userId);
+        });
+
+        modifyExpenseButton.setOnClickListener(v ->{
+            findViewById(R.id.modifyExpenseOverlay).setVisibility(View.VISIBLE);
+            populateModifyExpenseList(userId);
+        });
+
+        cancelModifyExpenseButton.setOnClickListener(v -> {
+            findViewById(R.id.modifyExpenseOverlay).setVisibility(View.GONE);
+            dynamicExpenseSetup(userId);
+        });
+
+        cancelSelectedModifyExpenseButton.setOnClickListener(v -> {
+            // Clear input fields
+            EditText amountInput = findViewById(R.id.inputNewExpenseAmount);
+            EditText categoryInput = findViewById(R.id.inputNewExpenseCategory);
+            EditText descriptionInput = findViewById(R.id.inputNewExpenseDescription);
+            EditText dateInput = findViewById(R.id.inputNewExpenseDate);
+            CheckBox recurringCheckBox = findViewById(R.id.isRecurringModify);
+
+            amountInput.setText("");
+            categoryInput.setText("");
+            descriptionInput.setText("");
+            dateInput.setText("");
+            recurringCheckBox.setChecked(false);
+
+            findViewById(R.id.modifySelectedExpenseOverlay).setVisibility(View.GONE);
         });
 
 
@@ -234,12 +200,7 @@ public class ExpenseActivity extends AppCompatActivity {
         return maxID + 1; // Return the next ID after the highest existing one.
     }
 
-    //method to return total amount of money spent on all user expenses (not finished)
-    private double calculateTotalUserExpenses(ArrayList<Expense> expenses, String expenseOwner){
-        double totalExpenses = 0.00;
-        return totalExpenses;
-    }
-
+    //Populates the list of expenses in the main Expense page
     private void dynamicExpenseSetup(String userAcc){
         //initialize list of expenses
         createExpenseList();
@@ -257,25 +218,34 @@ public class ExpenseActivity extends AppCompatActivity {
                     expenseLayout.setOrientation(LinearLayout.VERTICAL);
                     expenseLayout.setLayoutParams(new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT));
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    ));
 
                     // Create the TextView for expense amount and description
                     TextView expenseDescr = new TextView(this);
-                    String expenseInfo = String.format("$ %.2f %s", expense.getExpenseAmount(), String.valueOf(expense.getExpenseDescription()));
-                    expenseDescr.setText(expenseInfo);
-                    expenseDescr.setTypeface(null, Typeface.BOLD); // Make text bold
-                    expenseDescr.setLayoutParams(new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT));
-                    expenseDescr.setPadding(0, 0, 0, 8); // Optional padding to separate description from date
+                    String expenseInfo = String.format("$ %.2f - %s", expense.getExpenseAmount(),    String.valueOf(expense.getExpenseDescription()));
 
-                    // Create the TextView for date expense was made
+                    expenseDescr.setText(expenseInfo);
+                    expenseDescr.setTypeface(null, Typeface.BOLD);
+                    expenseDescr.setTextSize(24);
+                    expenseDescr.setTextColor(Color.BLACK);
+                    expenseDescr.setPadding(16, 16, 16, 8);
+                    expenseDescr.setLayoutParams(new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    ));
+
+                    // Create the TextView for the date
                     TextView expenseDate = new TextView(this);
                     expenseDate.setText(String.valueOf(expense.getDate()));
+                    expenseDate.setTypeface(null, Typeface.ITALIC);
+                    expenseDate.setTextSize(20);
+                    expenseDate.setTextColor(getResources().getColor(R. color. green));
+                    expenseDate.setPadding(16, 0, 16, 16);
                     expenseDate.setLayoutParams(new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.WRAP_CONTENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT));
-                    expenseDate.setPadding(0, 0, 0, 16); // Optional padding to separate bottom of entry to top of next
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                    ));
 
                     // Add both TextViews to the vertical layout
                     expenseLayout.addView(expenseDescr);
@@ -291,7 +261,69 @@ public class ExpenseActivity extends AppCompatActivity {
         }
     }
 
-    private void populateExpenseList(String userAcc) {
+    //Creates the overlay where you add expenses
+    private void populateAddExpenseOverlay(String userId){
+
+        Button doneButton = findViewById(R.id.doneAddExpenseButton); // Button in overlay
+        doneButton.setOnClickListener(doneView -> {
+            // Retrieve input values
+            EditText amountInput = findViewById(R.id.inputExpenseAmount);
+            EditText categoryInput = findViewById(R.id.inputExpenseCategory);
+            EditText descriptionInput = findViewById(R.id.inputExpenseDescription);
+            EditText dateInput = findViewById(R.id.inputExpenseDate);
+            CheckBox recurringCheckBox = findViewById(R.id.isRecurringAdd);
+
+            // Validate inputs
+            String amountText = amountInput.getText().toString().trim();
+            String category = categoryInput.getText().toString().trim();
+            String description = descriptionInput.getText().toString().trim();
+            String dateText = dateInput.getText().toString().trim();
+            boolean isRecurring = recurringCheckBox.isChecked();
+
+            if (amountText.isEmpty() || category.isEmpty() || description.isEmpty() || dateText.isEmpty()) {
+                Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                // Parse inputs
+                double amount = Double.parseDouble(amountText);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate date = LocalDate.parse(dateText, formatter);
+
+                // Create the Expense object
+                Expense newExpense = new Expense(
+                        getNextAvailableID(userId), // Assume ID is auto-incremented or managed elsewhere
+                        userId, // Current user's ID from SharedPreferences
+                        amount,
+                        category,
+                        description,
+                        date,
+                        isRecurring
+                );
+
+                // Save to CSV
+                expenseBank.addUserExpense(newExpense);
+                expenseBank.saveExpensesToFile();
+
+                // Clear input fields and hide overlay
+                amountInput.setText("");
+                categoryInput.setText("");
+                descriptionInput.setText("");
+                dateInput.setText("");
+                recurringCheckBox.setChecked(false);
+                findViewById(R.id.addExpenseOverlay).setVisibility(View.GONE);
+                dynamicExpenseSetup(userId);
+
+                Toast.makeText(this, "Expense added successfully!", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Toast.makeText(this, "Invalid input format.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    //Creates the overlay with the list of expenses for the user to remove
+    private void populateRemoveExpenseList(String userAcc) {
         LinearLayout expenseListContainer = findViewById(R.id.removeExpense_layout);
         Button removeSelectedExpenseButton = findViewById(R.id.removeSelectedExpenseButton);
         expenseListContainer.removeAllViews(); // Clear existing views
@@ -329,6 +361,7 @@ public class ExpenseActivity extends AppCompatActivity {
         }
     }
 
+    //Used to unhighlight the unselected expenses in populateRemoveExpenseList
     private void clearSelections(LinearLayout container) {
         for (int i = 0; i < container.getChildCount(); i++) {
             View child = container.getChildAt(i);
@@ -336,6 +369,7 @@ public class ExpenseActivity extends AppCompatActivity {
         }
     }
 
+    //Used to remove the expense in populateRemoveExpenseList
     private void removeExpense(Expense expense, String userAcc) {
         // Remove the expense from the ExpenseBank
         boolean removed = expenseBank.removeExpense(expense);
@@ -347,10 +381,125 @@ public class ExpenseActivity extends AppCompatActivity {
             expenseBank.saveExpensesToFile();
 
             // Refresh the expense list
-            populateExpenseList(userAcc);
+            populateRemoveExpenseList(userAcc);
         } else {
             Toast.makeText(this, "Failed to remove the expense.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    //Creates overlay with the list of current expenses to modify
+    private void populateModifyExpenseList (String userAcc){
+        LinearLayout expenseListContainer = findViewById(R.id.modifyExpense_layout);
+        Button modifySelectedExpenseButton = findViewById(R.id.modifySelectedExpenseButton);
+        expenseListContainer.removeAllViews(); // Clear existing views
+
+        final String[] selectedExpenseID = {null}; // Need expenseID to modify exact expense in AVD memory
+
+        // Fetch the user's expenses
+        if (expenseBank != null) {
+            Log.d("populateExpenseList", "Total Expenses: " + expenseBank.getExpenses().size());
+            for(Expense expense : expenseBank.getExpenses()) {
+                Log.d("populateExpenseList", "Owner: " + expense.getExpenseOwner());
+                if (expense.getExpenseOwner().equals(userAcc)) {
+                    Log.d("populateExpenseList", "Matching Expense: " + expense.getExpenseDescription());
+
+                    Button expenseButton = new Button(this);
+                    expenseButton.setText(expense.getExpenseDescription() + " - $" + expense.getExpenseAmount());
+                    expenseButton.setTag(expense); // Store the expense object in the tag
+                    expenseButton.setOnClickListener(v -> {
+                        clearSelections(expenseListContainer);
+                        expenseButton.setBackgroundColor(Color.LTGRAY);
+                        selectedExpenseID[0] = String.valueOf(expense.getExpenseID()); //Grab the selected expenseID
+                        modifySelectedExpenseButton.setVisibility(View.VISIBLE);
+                    });
+
+                    expenseListContainer.addView(expenseButton);
+                }
+            }
+            modifySelectedExpenseButton.setOnClickListener(v -> {
+                View overlay = findViewById(R.id.modifySelectedExpenseOverlay);
+                overlay.setVisibility(View.VISIBLE);
+                populateModifyExpenseOverlay(userAcc, selectedExpenseID[0]);
+                Log.d("ModifyExpense", "Overlay visibility set to VISIBLE");
+            });
+        }
+        else {
+            Log.e("populateExpenseList", "ExpenseBank is null!");
+            Toast.makeText(this, "No expenses found for this user.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void populateModifyExpenseOverlay (String userAcc, String expenseID){
+        // Find the expense to modify using the expenseID
+        Expense expenseToModify = expenseBank.getExpenseByID(expenseID, userAcc); // Implement getExpenseByID in ExpenseBank
+
+        if (expenseToModify == null) {
+            Toast.makeText(this, "Expense not found.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Pre-fill fields with existing data
+        EditText amountInput = findViewById(R.id.inputNewExpenseAmount);
+        EditText categoryInput = findViewById(R.id.inputNewExpenseCategory);
+        EditText descriptionInput = findViewById(R.id.inputNewExpenseDescription);
+        EditText dateInput = findViewById(R.id.inputNewExpenseDate);
+        CheckBox recurringCheckBox = findViewById(R.id.isRecurringModify);
+
+        amountInput.setText(String.valueOf(expenseToModify.getExpenseAmount()));
+        categoryInput.setText(expenseToModify.getExpenseCategory());
+        descriptionInput.setText(expenseToModify.getExpenseDescription());
+        dateInput.setText(expenseToModify.getDate().toString());
+        recurringCheckBox.setChecked(expenseToModify.isRecurring());
+
+        // Save changes when done
+        Button doneButton = findViewById(R.id.doneModifyExpenseButton);
+        doneButton.setOnClickListener(doneView -> {
+
+            // Retrieve updated input values
+            String amountText = amountInput.getText().toString().trim();
+            String category = categoryInput.getText().toString().trim();
+            String description = descriptionInput.getText().toString().trim();
+            String dateText = dateInput.getText().toString().trim();
+            boolean isRecurring = recurringCheckBox.isChecked();
+
+            if (amountText.isEmpty() || category.isEmpty() || description.isEmpty() || dateText.isEmpty()) {
+                Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                // Parse inputs
+                double amount = Double.parseDouble(amountText);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate date = LocalDate.parse(dateText, formatter);
+
+                // Modify the expense with the given ID
+                expenseToModify.setExpenseAmount(amount);
+                expenseToModify.setExpenseCategory(category);
+                expenseToModify.setExpenseDescription(description);
+                expenseToModify.setDate(date);
+                expenseToModify.setRecurring(isRecurring);
+
+                // Save to CSV
+                expenseBank.saveExpensesToFile();
+
+                // Clear input fields and hide overlay
+                amountInput.setText("");
+                categoryInput.setText("");
+                descriptionInput.setText("");
+                dateInput.setText("");
+                recurringCheckBox.setChecked(false);
+                findViewById(R.id.modifySelectedExpenseOverlay).setVisibility(View.GONE);
+
+                // Reload the expenses
+                dynamicExpenseSetup(userAcc);
+                populateModifyExpenseList(userAcc);
+
+                Toast.makeText(this, "Expense added successfully!", Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Toast.makeText(this, "Invalid input format.", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void launchOverview() {

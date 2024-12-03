@@ -267,16 +267,33 @@
                 android:textSize="24sp"
                 android:gravity="center"
                 android:layout_marginBottom="8dp"/>
-            <TextView
+
+            <ScrollView
+                android:id="@+id/modifyExpenseScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:layout_marginTop="24dp">
+                <!--may have to use constraint layout
+                to occupy the space dynamically-->
+
+                <LinearLayout
+                    android:id="@+id/modifyExpense_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+            <Button
                 android:id="@+id/modifySelectedExpenseButton"
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="400dp"
                 android:text="Select"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="24sp"
+                android:backgroundTint="@color/green"
                 android:gravity="center"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"/>
             <TextView
                 android:id="@+id/cancelModifyExpenseButton"
                 android:layout_width="300dp"
@@ -396,10 +413,12 @@
                     android:textSize="24sp"
                     android:textColor="#FFFFFF"
                     android:checked="false" />
-                <TextView
+                <Button
+                    android:id="@+id/doneModifyExpenseButton"
                     android:layout_width="300dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="400dp"
+                    android:backgroundTint="@color/green"
                     android:text="Done"
                     android:textColor="#FFFFFF"
                     android:textSize="24sp"
@@ -573,7 +592,7 @@
                 android:id="@+id/removeExpenseScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:layout_marginTop="16dp">
+                android:layout_marginTop="24dp">
                 <!--may have to use constraint layout
                 to occupy the space dynamically-->
 
