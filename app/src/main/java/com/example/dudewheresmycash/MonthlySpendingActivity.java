@@ -1,13 +1,40 @@
 package com.example.dudewheresmycash;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import Model.Expense;
+import Model.ExpenseBank;
 
 public class MonthlySpendingActivity extends AppCompatActivity {
 
@@ -73,22 +100,90 @@ public class MonthlySpendingActivity extends AppCompatActivity {
             }
         });
 
+        // Retrieve user ID
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("USER_ID", null);
 
-        // Setup the ProgressBar chart
-        ProgressBar bar1 = findViewById(R.id.bar1);
-        ProgressBar bar2 = findViewById(R.id.bar2);
-        ProgressBar bar3 = findViewById(R.id.bar3);
+        // Check if userId is valid
+        if (userId == null) {
+            Toast.makeText(this, "User not logged in!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        // Initialize ExpenseBank and load expenses
+        ExpenseBank expenseBank = new ExpenseBank(this);
+        expenseBank.initializeExpenseList();
 
+        // Dynamically create and add a BarChart
+        BarChart barChart = new BarChart(this);
+        LinearLayout chartContainer = findViewById(R.id.barChart);
+        chartContainer.addView(barChart);
 
-        int[] data = {50, 75, 60};
+        // Prepare data for the chart
+        ArrayList<BarEntry> entries = processMonthlyExpenses(expenseBank, userId);
 
+        // Create a dataset and add it to the chart
+        BarDataSet dataSet = new BarDataSet(entries, "Monthly Spending");
+        dataSet.setColors(ColorTemplate.MATERIAL_COLORS); // Add colors to the bars
+        BarData data = new BarData(dataSet);
 
-        bar1.setProgress(data[0]);
-        bar2.setProgress(data[1]);
-        bar3.setProgress(data[2]);
+        // Customize the chart
+        barChart.setData(data);
+        barChart.setFitBars(true); // Make the bars fit within the chart
+        Description description = new Description();
+        description.setText("Spending Overview");
+        barChart.setDescription(description);
+        barChart.animateY(1000); // Animation
 
+        // Get Y-axis (Left Axis) of the chart
+        YAxis leftAxis = barChart.getAxisLeft();
+        leftAxis.setAxisMinimum(0f); // Start from 0
+        leftAxis.setAxisMaximum(5000f); // Adjust this to a value higher than the highest bar value
+        leftAxis.setGranularity(50f); // Step size for labels
 
+        // Optionally remove the right axis for a cleaner look
+        YAxis rightAxis = barChart.getAxisRight();
+        rightAxis.setEnabled(false);
+
+        // Set the bar width (between 0.1f and 1.0f)
+        data.setBarWidth(0.5f); // Adjust for wider bars
+
+        // Dynamically set the chart size to stretch
+        barChart.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+        barChart.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+        barChart.requestLayout();
+
+        barChart.getXAxis().setGranularity(1f); // Ensure labels are evenly spaced
+        barChart.getXAxis().setLabelCount(12); // Number of months or data points
+
+    }
+
+    private ArrayList<BarEntry> processMonthlyExpenses(ExpenseBank expenseBank, String userId){
+        ArrayList<BarEntry> entries = new ArrayList<>();
+        Map<Integer, Double> monthlyTotals = new HashMap<>();
+
+        // Iterate through expenses for the user
+        for (Expense expense : expenseBank.getExpenses()) {
+            if (expense.getExpenseOwner().equals(userId)) {
+                // Extract the month from the expense date
+                int month = expense.getDate().getMonthValue();
+
+                // Add the expense amount to the monthly total
+                monthlyTotals.put(month, monthlyTotals.getOrDefault(month, 0.0) + expense.getExpenseAmount());
+            }
+        }
+
+        // Convert map entries into BarEntry objects
+        for (Map.Entry<Integer, Double> entry : monthlyTotals.entrySet()) {
+            int month = entry.getKey();
+            float totalAmount = entry.getValue().floatValue();
+            entries.add(new BarEntry(month, totalAmount));
+        }
+
+        // Sort entries by month (optional, for cleaner chart display)
+        Collections.sort(entries, (e1, e2) -> Float.compare(e1.getX(), e2.getX()));
+
+        return entries;
     }
 
 

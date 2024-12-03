@@ -195,8 +195,6 @@ public class OverviewActivity extends AppCompatActivity {
          * And the name of the category to the right
          * We load a list of categories from a file
          * and iterate through them to populate the category list
-         * still need to modify this to pull data based on user
-         * and exception/debugging statements
          */
         // Initialize the list of categories
         createCategoryList();
