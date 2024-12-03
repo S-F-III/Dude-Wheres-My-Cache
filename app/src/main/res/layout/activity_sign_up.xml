@@ -45,13 +45,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:textSize="25sp"
         android:inputType="text"
-        android:text=""
+        android:hint="Enter your Name"
         app:layout_constraintBottom_toTopOf="@+id/user_id"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_name"
-        android:textSize="25sp"/>
+        app:layout_constraintTop_toBottomOf="@+id/user_name" />
 
     <TextView
         android:id="@+id/user_id"
@@ -69,13 +69,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:textSize="25sp"
         android:inputType="text"
-        android:text=""
+        android:hint="Enter your User ID"
         app:layout_constraintBottom_toTopOf="@+id/password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_id"
-        android:textSize="25sp"/>
+        app:layout_constraintTop_toBottomOf="@+id/user_id" />
 
     <TextView
         android:id="@+id/password"
@@ -95,7 +95,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
-        android:text=""
+        android:hint="Enter your Password"
         android:textSize="25sp"
         app:layout_constraintBottom_toTopOf="@id/budget_amt"
         app:layout_constraintEnd_toEndOf="parent"
@@ -120,7 +120,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
-        android:text=""
+        android:hint="Enter your Budget"
         android:textSize="25sp"
         app:layout_constraintBottom_toTopOf="@id/next_button"
         app:layout_constraintEnd_toEndOf="parent"

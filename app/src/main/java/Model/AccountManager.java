@@ -106,15 +106,42 @@ public class AccountManager {
         }
     }
 
-    public void changeUserName(String currentName, String newName){
-
+    public void changeUserName(String userId, String currentName, String newName){
+        Log.d(TAG, "Attempting to update " + userId + "'s name. Current Name: " + currentName);
+        UserAccount account = getUserAccount(userId);
+        if(account != null) {
+            account.setUserName(newName);
+            saveAccountsToFile();
+            Log.i(TAG, "User's name has been changed from " + currentName + " to " + newName);
+        }
+        else{
+            Log.e(TAG, "Account cannot be found for " + userId);
+        }
     }
 
-    public void changeUserPassword(String currentPassword, String newPassword){
-
+    public void changeUserPassword(String userId, String currentPassword, String newPassword){
+        Log.d(TAG, "Attempting to update " + userId + "'s password. Current Password: " + currentPassword);
+        UserAccount account = getUserAccount(userId);
+        if(account != null) {
+            account.setUserPassword(newPassword);
+            saveAccountsToFile();
+            Log.i(TAG, "User's password has been changed from " + currentPassword + " to " + newPassword);
+        }
+        else{
+            Log.e(TAG, "Account cannot be found for " + userId);
+        }
     }
 
-    public void changeUserBudget(String currentBudget, String newBudget){
-
+    public void changeUserBudget(String userId, String currentBudget, String newBudget){
+        Log.d(TAG, "Attempting to update " + userId + "'s budget. Current Budget: " + currentBudget);
+        UserAccount account = getUserAccount(userId);
+        if(account != null) {
+            account.setUserBudget(newBudget);
+            saveAccountsToFile();
+            Log.i(TAG, "User's budget has been changed from " + currentBudget + " to " + newBudget);
+        }
+        else{
+            Log.e(TAG, "Account cannot be found for " + userId);
+        }
     }
 }
