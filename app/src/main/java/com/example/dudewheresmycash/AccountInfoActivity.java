@@ -84,6 +84,12 @@ public class AccountInfoActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         String userId = sharedPreferences.getString("USER_ID", null);
 
+        // Retrieve and display the account creation date using the existing sharedPreferences
+        String creationDate = sharedPreferences.getString("CREATION_DATE", "Not Available");
+        TextView creationDateTextView = findViewById(R.id.accountCreatedText); // Corrected ID
+        creationDateTextView.setText("Account Created: " + creationDate);
+
+
         Button changeNameButton = findViewById(R.id.changeNameButton);
         Button changePasswordButton = findViewById(R.id.changePasswordButton);
         Button changeBudgetButton = findViewById(R.id.changeBudgetButton);
