@@ -20,35 +20,53 @@ import Model.CategoryTracker;
 import Model.Expense;
 import Model.ExpenseBank;
 
+/**
+ * Activity class for managing custom expense categories.
+ * Provides a user interface for creating and customizing expense categories.
+ */
 public class CustomCategoryActivity extends AppCompatActivity {
 
     private static final String TAG = "CustomCategoryActivity";
     private CategoryTracker categoryTracker;
     private ExpenseBank expenseBank;
 
+    /**
+     * Called when the activity is starting.
+     * Sets up the layout, applies edge-to-edge design, and configures window insets.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously
+     *                           being shut down, this Bundle contains the most recent data.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Enable edge-to-edge display
         EdgeToEdge.enable(this);
+        // Set the layout resource for the activity
         setContentView(R.layout.activity_custom_category);
+        // Apply window insets for edge-to-edge design
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        // Retrieve user ID from shared preferences
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         String userId = sharedPreferences.getString("USER_ID", null);
 
+        // Initialize UI components
         Button saveChangesButton = findViewById(R.id.saveNameChangesButton);
         EditText inputCurrentCategory = (EditText) findViewById(R.id.enterCategoryTitle);
         EditText inputCustomCategory = (EditText) findViewById(R.id.enterCustomTitle);
         EditText inputNewDescription = (EditText) findViewById(R.id.enterNewDescription);
 
+        // Initialize CategoryTracker and load categories
         categoryTracker = new CategoryTracker();
         categoryTracker.initializeInternalStorage(this, "categories.csv", "internal-categories.csv");
         categoryTracker.loadCategoriesFromInternalFile(this, "internal-categories.csv", userId);
 
+        // Set listener for saving changes to a category
         saveChangesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -60,15 +78,28 @@ public class CustomCategoryActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Initializes the expense list for managing associated expenses with categories.
+     */
     private void createExpenseList(){
         expenseBank = new ExpenseBank(this);
         expenseBank.initializeExpenseList();
     }
 
+    /**
+     * Updates a category's title and description, validates inputs, and updates associated expenses.
+     * Navigates back to the account information activity on successful update.
+     *
+     * @param userId         The ID of the user making the update.
+     * @param oldTitle       The current title of the category to be updated.
+     * @param newTitle       The new title for the category.
+     * @param newDescription The new description for the category.
+     */
     private void launchAccountInfoActivity(String userId, String oldTitle, String newTitle, String newDescription){
 
         createExpenseList();
 
+        // Validate inputs
         if (newTitle.isEmpty()) {
             Toast.makeText(this, "New title cannot be empty", Toast.LENGTH_SHORT).show();
             return;
@@ -89,6 +120,7 @@ public class CustomCategoryActivity extends AppCompatActivity {
 
         boolean titleUpdated = false;
 
+        // Update the category if it belongs to the user
         // Iterate through categories to find and update (optional: must make this optimal as it is O(N) time complexity
         for (Category category : categoryTracker.getCategories()) {
             if (category.getUserId().equals(userId)) {

@@ -30,11 +30,22 @@ import Model.CategoryTracker;
 import Model.Expense;
 import Model.ExpenseBank;
 
+/**
+ * Activity class for managing expenses.
+ * Provides features to dynamically display, add, modify, and remove expenses for a user.
+ */
 public class ExpenseActivity extends AppCompatActivity {
 
     private ExpenseBank expenseBank;
     private Expense expense;
 
+    /**
+     * Called when the activity is starting.
+     * Sets up the UI, dynamic expense list, and navigation functionality.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously
+     *                           being shut down, this Bundle contains the most recent data.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +62,7 @@ public class ExpenseActivity extends AppCompatActivity {
 
         dynamicExpenseSetup(userId);
 
+        // Setup navigation buttons and overlays for expense operations
         ImageView hbMenu = findViewById(R.id.hbMenu);
         ImageView hbMenu2 = findViewById(R.id.hbMenu2);
         TextView overviewButton = findViewById(R.id.overviewButton);
@@ -71,11 +83,11 @@ public class ExpenseActivity extends AppCompatActivity {
         TextView cancelRemoveExpenseButton = findViewById(R.id.cancelRemoveExpenseButton);
         TextView cancelSelectedModifyExpenseButton = findViewById(R.id.cancelSelectedModifyExpenseButton);
 
-
-
+        // Navigation menu toggle
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
 
+        // Overlay actions for adding, modifying, and removing expenses
         addExpenseButton.setOnClickListener(v -> {
             // Show the overlay
             findViewById(R.id.addExpenseOverlay).setVisibility(View.VISIBLE);
@@ -137,7 +149,7 @@ public class ExpenseActivity extends AppCompatActivity {
             findViewById(R.id.modifySelectedExpenseOverlay).setVisibility(View.GONE);
         });
 
-
+        // Navigation button listeners
         overviewButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -182,15 +194,19 @@ public class ExpenseActivity extends AppCompatActivity {
         });
     }
 
-
-
-    //creates list of expenses
+    /**
+     * Initializes the expense list from the ExpenseBank.
+     */
     private void createExpenseList(){
         expenseBank = new ExpenseBank(this);
         expenseBank.initializeExpenseList();
     }
 
-    //gets the next highest available ID to assign to a new expense
+    /**
+     * Gets the next available ID for a new expense.
+     * @param userAcc The current user's ID.
+     * @return The next available ID.
+     */
     private int getNextAvailableID(String userAcc) {
         int maxID = 0; // Start with 0; you can start with 1 if IDs should be 1-based.
         if (expenseBank != null) {
@@ -203,7 +219,10 @@ public class ExpenseActivity extends AppCompatActivity {
         return maxID + 1; // Return the next ID after the highest existing one.
     }
 
-    //Populates the list of expenses in the main Expense page
+    /**
+     * Dynamically sets up the expense list for the current user.
+     * @param userAcc The current user's ID.
+     */
     private void dynamicExpenseSetup(String userAcc){
         //initialize list of expenses
         createExpenseList();
@@ -270,7 +289,10 @@ public class ExpenseActivity extends AppCompatActivity {
         }
     }
 
-    //Creates the overlay where you add expenses
+    /**
+     * Populates the overlay for adding a new expense.
+     * @param userId The current user's ID.
+     */
     private void populateAddExpenseOverlay(String userId){
 
         Button doneButton = findViewById(R.id.doneAddExpenseButton); // Button in overlay
@@ -331,7 +353,10 @@ public class ExpenseActivity extends AppCompatActivity {
         });
     }
 
-    //Creates the overlay with the list of expenses for the user to remove
+    /**
+     * Populates the list of expenses for the remove overlay.
+     * @param userAcc The current user's ID.
+     */
     private void populateRemoveExpenseList(String userAcc) {
         LinearLayout expenseListContainer = findViewById(R.id.removeExpense_layout);
         Button removeSelectedExpenseButton = findViewById(R.id.removeSelectedExpenseButton);
@@ -370,7 +395,12 @@ public class ExpenseActivity extends AppCompatActivity {
         }
     }
 
-    //Used to unhighlight the unselected expenses in populateRemoveExpenseList
+    /**
+     * Clears the selection highlight from all child views in the specified container.
+     * This is used to reset the background of unselected expense views to transparent.
+     *
+     * @param container The {@link LinearLayout} containing the expense views.
+     */
     private void clearSelections(LinearLayout container) {
         for (int i = 0; i < container.getChildCount(); i++) {
             View child = container.getChildAt(i);
@@ -378,7 +408,13 @@ public class ExpenseActivity extends AppCompatActivity {
         }
     }
 
-    //Used to remove the expense in populateRemoveExpenseList
+    /**
+     * Removes the specified expense from the user's expense list.
+     * Updates the data source and refreshes the displayed expense list upon successful removal.
+     *
+     * @param expense The {@link Expense} object to be removed.
+     * @param userAcc The ID of the current user.
+     */
     private void removeExpense(Expense expense, String userAcc) {
         // Remove the expense from the ExpenseBank
         boolean removed = expenseBank.removeExpense(expense);
@@ -396,8 +432,15 @@ public class ExpenseActivity extends AppCompatActivity {
         }
     }
 
-    //Creates overlay with the list of current expenses to modify
+    /**
+     * Populates the list of expenses for modification.
+     * Displays the user's expenses in a list, allowing selection of a specific expense for modification.
+     * Highlights the selected expense and shows the modification button.
+     *
+     * @param userAcc The ID of the current user whose expenses are being displayed.
+     */
     private void populateModifyExpenseList (String userAcc){
+        // Get the container where expense buttons will be displayed
         LinearLayout expenseListContainer = findViewById(R.id.modifyExpense_layout);
         Button modifySelectedExpenseButton = findViewById(R.id.modifySelectedExpenseButton);
         expenseListContainer.removeAllViews(); // Clear existing views
@@ -409,22 +452,25 @@ public class ExpenseActivity extends AppCompatActivity {
             Log.d("populateExpenseList", "Total Expenses: " + expenseBank.getExpenses().size());
             for(Expense expense : expenseBank.getExpenses()) {
                 Log.d("populateExpenseList", "Owner: " + expense.getExpenseOwner());
+                // Display expenses that belong to the user
                 if (expense.getExpenseOwner().equals(userAcc)) {
                     Log.d("populateExpenseList", "Matching Expense: " + expense.getExpenseDescription());
-
+                    // Create a button for each expense
                     Button expenseButton = new Button(this);
                     expenseButton.setText(expense.getExpenseDescription() + " - $" + expense.getExpenseAmount());
                     expenseButton.setTag(expense); // Store the expense object in the tag
+                    // Set up click listener for the expense button
                     expenseButton.setOnClickListener(v -> {
                         clearSelections(expenseListContainer);
                         expenseButton.setBackgroundColor(Color.LTGRAY);
                         selectedExpenseID[0] = String.valueOf(expense.getExpenseID()); //Grab the selected expenseID
                         modifySelectedExpenseButton.setVisibility(View.VISIBLE);
                     });
-
+                    // Add the button to the container
                     expenseListContainer.addView(expenseButton);
                 }
             }
+            // Set up the modify button to handle the selected expense
             modifySelectedExpenseButton.setOnClickListener(v -> {
                 View overlay = findViewById(R.id.modifySelectedExpenseOverlay);
                 overlay.setVisibility(View.VISIBLE);
@@ -438,6 +484,13 @@ public class ExpenseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Populates the modify expense overlay with the details of the selected expense.
+     * Allows the user to edit the expense's amount, category, description, date, and recurrence status.
+     *
+     * @param userAcc   The ID of the current user.
+     * @param expenseID The ID of the expense to modify.
+     */
     private void populateModifyExpenseOverlay (String userAcc, String expenseID){
         // Find the expense to modify using the expenseID
         Expense expenseToModify = expenseBank.getExpenseByID(expenseID, userAcc); // Implement getExpenseByID in ExpenseBank
@@ -511,6 +564,15 @@ public class ExpenseActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Validates the inputs for an expense.
+     * @param amountText The expense amount as a string.
+     * @param category The expense category.
+     * @param description The expense description.
+     * @param dateText The expense date as a string.
+     * @param userId The current user's ID.
+     * @return True if all inputs are valid; false otherwise.
+     */
     private boolean validateInputs(String amountText, String category, String description, String dateText, String userId) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -537,6 +599,13 @@ public class ExpenseActivity extends AppCompatActivity {
         return true; // All inputs are valid
     }
 
+    /**
+     * Validates whether a given date string matches the specified date format.
+     *
+     * @param dateStr   The date string to validate.
+     * @param formatter The {@link DateTimeFormatter} specifying the expected date format.
+     * @return {@code true} if the date string is valid according to the formatter; {@code false} otherwise.
+     */
     public static boolean isValidLocalDate(String dateStr, DateTimeFormatter formatter) {
         try {
             LocalDate.parse(dateStr, formatter);
@@ -546,6 +615,12 @@ public class ExpenseActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Checks whether a given string represents a valid numeric value.
+     *
+     * @param strNum The string to validate.
+     * @return {@code true} if the string represents a numeric value; {@code false} otherwise.
+     */
     public static boolean isNumeric(String strNum) {
         if (strNum == null) {
             return false;
@@ -558,30 +633,57 @@ public class ExpenseActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Launches the overview activity.
+     */
     private void launchOverview() {
         Intent intent = new Intent(this, OverviewActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Launches the expense activity.
+     */
     private void launchExpenses() {
         Intent intent = new Intent(this, ExpenseActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Launches the notification activity.
+     */
     private void launchNotifications() {
         Intent intent = new Intent(this, NotificationActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Launches the account information activity.
+     */
     private void launchAccountInfo() {
         Intent intent = new Intent(this, AccountInfoActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Launches the settings activity.
+     */
     private void launchSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Launches the monthly spending activity.
+     */
     private void launchMonthlySpending() {
         Intent intent = new Intent(this, MonthlySpendingActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Logs out the user and clears the shared preferences.
+     */
     private void launchSignOut() {
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
