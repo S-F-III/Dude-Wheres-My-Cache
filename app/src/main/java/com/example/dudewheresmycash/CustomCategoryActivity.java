@@ -43,6 +43,7 @@ public class CustomCategoryActivity extends AppCompatActivity {
         Button saveChangesButton = findViewById(R.id.saveNameChangesButton);
         EditText inputCurrentCategory = (EditText) findViewById(R.id.enterCategoryTitle);
         EditText inputCustomCategory = (EditText) findViewById(R.id.enterCustomTitle);
+        EditText inputNewDescription = (EditText) findViewById(R.id.enterNewDescription);
 
         categoryTracker = new CategoryTracker();
         categoryTracker.initializeInternalStorage(this, "categories.csv", "internal-categories.csv");
@@ -53,7 +54,8 @@ public class CustomCategoryActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String oldTitle = inputCurrentCategory.getText().toString().trim();
                 String newTitle = inputCustomCategory.getText().toString().trim();
-                launchAccountInfoActivity(userId, oldTitle, newTitle);
+                String newDescription = inputNewDescription.getText().toString().trim();
+                launchAccountInfoActivity(userId, oldTitle, newTitle, newDescription);
             }
         });
     }
@@ -63,12 +65,17 @@ public class CustomCategoryActivity extends AppCompatActivity {
         expenseBank.initializeExpenseList();
     }
 
-    private void launchAccountInfoActivity(String userId, String oldTitle, String newTitle){
+    private void launchAccountInfoActivity(String userId, String oldTitle, String newTitle, String newDescription){
 
         createExpenseList();
 
         if (newTitle.isEmpty()) {
             Toast.makeText(this, "New title cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(newDescription.isEmpty()){
+            Toast.makeText(this, "New description cannot be empty", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -82,12 +89,13 @@ public class CustomCategoryActivity extends AppCompatActivity {
 
         boolean titleUpdated = false;
 
-        // Iterate through categories to find and update (optional: must make this optimal as it is O N time complexity
+        // Iterate through categories to find and update (optional: must make this optimal as it is O(N) time complexity
         for (Category category : categoryTracker.getCategories()) {
             if (category.getUserId().equals(userId)) {
                 // Check if the old title matches
                 if (category.getCategoryName().equalsIgnoreCase(oldTitle)) {
                     category.setCategoryName(capitalizedNewTitle);
+                    category.setCategoryDescription(newDescription);
                     titleUpdated = true;
                     break; // Exit loop after finding and updating the matching category
                 }
