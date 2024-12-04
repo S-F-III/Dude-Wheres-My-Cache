@@ -118,7 +118,7 @@ public class CustomCategoryActivity extends AppCompatActivity {
 
             // Optionally save the updated expenses back to persistent storage (if required)
             if (expenseUpdated) {
-                expenseBank.saveExpensesToFile(); // Ensure you have this method implemented
+                expenseBank.saveExpensesToFile();
             }
 
             Intent intent = new Intent(this, AccountInfoActivity.class);

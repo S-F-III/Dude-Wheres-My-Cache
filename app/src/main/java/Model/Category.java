@@ -6,12 +6,6 @@ public class Category {
     private String categoryDescription;
     private String userId;
 
-    public Category(String categoryName, String categoryColor, String categoryDescription){
-        this.categoryName = categoryName;
-        this.categoryColor = categoryColor;
-        this.categoryDescription = categoryDescription;
-    }
-
     public Category(String categoryName, String categoryColor, String categoryDescription, String userId){
         this.categoryName = categoryName;
         this.categoryColor = categoryColor;
@@ -23,9 +17,6 @@ public class Category {
         return this.categoryColor;
     }
 
-    public void setCategoryColor(String categoryColor){
-        this.categoryColor = categoryColor;
-    }
     public String getCategoryName(){
         return this.categoryName;
     }

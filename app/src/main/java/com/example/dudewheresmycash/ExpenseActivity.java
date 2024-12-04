@@ -24,7 +24,9 @@ import androidx.core.view.WindowInsetsCompat;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
+import Model.CategoryTracker;
 import Model.Expense;
 import Model.ExpenseBank;
 
@@ -287,9 +289,9 @@ public class ExpenseActivity extends AppCompatActivity {
             String dateText = dateInput.getText().toString().trim();
             boolean isRecurring = recurringCheckBox.isChecked();
 
-            if (amountText.isEmpty() || category.isEmpty() || description.isEmpty() || dateText.isEmpty()) {
-                Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
-                return;
+            // Perform input validation
+            if (!validateInputs(amountText, category, description, dateText, userId)) {
+                return; // Stop if validation fails
             }
 
             try {
@@ -469,9 +471,9 @@ public class ExpenseActivity extends AppCompatActivity {
             String dateText = dateInput.getText().toString().trim();
             boolean isRecurring = recurringCheckBox.isChecked();
 
-            if (amountText.isEmpty() || category.isEmpty() || description.isEmpty() || dateText.isEmpty()) {
-                Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
-                return;
+            // Perform input validation
+            if (!validateInputs(amountText, category, description, dateText, userAcc)) {
+                return; // Stop if validation fails
             }
 
             try {
@@ -507,6 +509,53 @@ public class ExpenseActivity extends AppCompatActivity {
                 Toast.makeText(this, "Invalid input format.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private boolean validateInputs(String amountText, String category, String description, String dateText, String userId) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        if (amountText.isEmpty() || category.isEmpty() || description.isEmpty() || dateText.isEmpty()) {
+            Toast.makeText(this, "Please fill in all fields.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (!isNumeric(amountText)) {
+            Toast.makeText(this, "Invalid Amount: Enter a number e.g., 19.95", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        CategoryTracker categoryTracker = new CategoryTracker();
+        categoryTracker.loadCategoriesFromInternalFile(this, "internal-categories.csv", userId);
+        if(categoryTracker.getCategoryByID(category, userId) == null){
+            Toast.makeText(this, "Invalid Category: Cannot find category (Case-sensitive)", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!isValidLocalDate(dateText, formatter)){
+            Toast.makeText(this, "Invalid Date: Use format yyyy-mm-dd", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true; // All inputs are valid
+    }
+
+    public static boolean isValidLocalDate(String dateStr, DateTimeFormatter formatter) {
+        try {
+            LocalDate.parse(dateStr, formatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
+        }
+    }
+
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            double d = Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 
     private void launchOverview() {

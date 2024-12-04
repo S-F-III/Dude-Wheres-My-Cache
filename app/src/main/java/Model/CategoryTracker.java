@@ -1,10 +1,7 @@
 package Model;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.util.Log;
-
-import com.example.dudewheresmycash.OverviewActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class CategoryTracker {
@@ -31,12 +27,6 @@ public class CategoryTracker {
 
     public void setCategories(ArrayList<Category> categories) {
         this.categories = categories;
-    }
-
-    public void addCategory(Category category){
-        if(categories != null){
-            categories.add(category);
-        }
     }
 
     public void initializeInternalStorage(Context context, String assetFileName, String internalFileName) {
@@ -143,9 +133,9 @@ public class CategoryTracker {
         categories.add(new Category("Unspent", "white", "Remaining space for expenses", userId));
     }
 
-    public Category getCategory(String categoryType){
-        for (Category category : categories){
-            if(category.getCategoryName().equals(categoryType)){
+    public Category getCategoryByID(String userCategory, String userId){
+        for(Category category : categories){
+            if(category.getUserId().equals(userId) && category.getCategoryName().equals(userCategory)){
                 return category;
             }
         }
