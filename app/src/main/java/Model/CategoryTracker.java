@@ -132,25 +132,6 @@ public class CategoryTracker {
         }
     }
 
-    /* set for deletion
-    public void loadCategories(OverviewActivity activity){
-        AssetManager manager = activity.getAssets();
-        Scanner scan = null;
-        String filename = "categories.csv";
-        try{
-            // Open the CSV file from the assets folder
-            InputStream file = manager.open(filename);
-            scan = new Scanner(file);
-            scan.nextLine(); // Skip the header line
-            // Read each line of the CSV and create a Category object
-            while(scan.hasNextLine()){
-                String[] line = scan.nextLine().split(",");
-                addCategory(new Category(line[0],line[1],line[2]));
-            }
-        }
-        catch (IOException e) {} // Exception handling can be added if necessary
-    }*/
-
     private void addDefaultCategoriesForUser(String userId) {
         // Add default categories for the new user
         categories.add(new Category("Housing","green","Expenses related to residence", userId));

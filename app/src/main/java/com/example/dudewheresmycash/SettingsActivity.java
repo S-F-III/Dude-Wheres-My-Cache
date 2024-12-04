@@ -59,6 +59,7 @@ public class SettingsActivity extends AppCompatActivity {
         Button exportDataButton = findViewById(R.id.exportDataButton);
         Button noButton = findViewById(R.id.noButton);
         Button deleteAccountButton = findViewById(R.id.deleteAccountButton);
+        Button renameCategoryButton = findViewById(R.id.addCustomCategoryButton);
 
         clearBudgetButton.setOnClickListener(v -> findViewById(R.id.clearBudgetBox).setVisibility(View.VISIBLE));
         exportDataButton.setOnClickListener(v -> findViewById(R.id.clearBudgetBox).setVisibility(View.VISIBLE));
@@ -118,6 +119,12 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 launchSignOut();
+            }
+        });
+        renameCategoryButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                launchCustomCategoryActivity();
             }
         });
     }
@@ -194,6 +201,11 @@ public class SettingsActivity extends AppCompatActivity {
         notificationBank.initializeNotificationList();
     }
 
+    private void launchCustomCategoryActivity(){
+        Intent intent = new Intent(this, CustomCategoryActivity.class);
+        startActivity(intent);
+    }
+
     private void launchOverview() {
         Intent intent = new Intent(this, OverviewActivity.class);
         startActivity(intent);
@@ -219,7 +231,15 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(intent);
     }
     private void launchSignOut() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("USER_ID").apply();
+        editor.clear(); // Clear all stored data
+        editor.apply();
+
         Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
     }
 }
