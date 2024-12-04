@@ -72,6 +72,11 @@ public class CustomCategoryActivity extends AppCompatActivity {
             return;
         }
 
+        if(oldTitle.equals("Unspent")){
+            Toast.makeText(this, "Cannot change \"Unspent\" category", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Capitalize the new title
         String capitalizedNewTitle = newTitle.substring(0, 1).toUpperCase() + newTitle.substring(1);
 
@@ -96,7 +101,7 @@ public class CustomCategoryActivity extends AppCompatActivity {
             // Update expenses associated with the old title
             boolean expenseUpdated = false;
             for (Expense expense : expenseBank.getExpenses()) {
-                if (expense.getExpenseOwner().equals(userId) && expense.getExpenseCategory().equalsIgnoreCase(oldTitle)) {
+                if (expense.getExpenseOwner().equals(userId) && (expense.getExpenseCategory().equalsIgnoreCase(oldTitle))) {
                     expense.setExpenseCategory(capitalizedNewTitle);
                     expenseUpdated = true;
                     Log.i(TAG, "Updated expense: " + expense.getExpenseID() + " to category: " + capitalizedNewTitle);
