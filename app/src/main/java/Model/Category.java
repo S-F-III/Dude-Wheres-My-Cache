@@ -4,11 +4,19 @@ public class Category {
     private String categoryName;
     private String categoryColor;
     private String categoryDescription;
+    private String userId;
 
     public Category(String categoryName, String categoryColor, String categoryDescription){
         this.categoryName = categoryName;
         this.categoryColor = categoryColor;
         this.categoryDescription = categoryDescription;
+    }
+
+    public Category(String categoryName, String categoryColor, String categoryDescription, String userId){
+        this.categoryName = categoryName;
+        this.categoryColor = categoryColor;
+        this.categoryDescription = categoryDescription;
+        this.userId = userId;
     }
 
     public String getCategoryColor(){
@@ -33,4 +41,11 @@ public class Category {
         this.categoryDescription = categoryDescription;
     }
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 }

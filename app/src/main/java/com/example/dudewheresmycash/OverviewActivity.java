@@ -198,7 +198,11 @@ public class OverviewActivity extends AppCompatActivity {
 
     private void createCategoryList(){
         categoryTracker = new CategoryTracker();
-        categoryTracker.loadCategories(this);
+        categoryTracker.initializeInternalStorage(this, "categories.csv", "internal-categories.csv");
+        // Check and add user-specific categories if needed
+        categoryTracker.loadCategoriesFromInternalFile(this, "internal-categories.csv", userAccount.getUserID());
+        // Save the updated categories to persist changes
+        categoryTracker.saveCategoriesToInternalFile(this, "internal-categories.csv");
     }
 
     private void dynamicCategorySetup(){
@@ -215,52 +219,54 @@ public class OverviewActivity extends AppCompatActivity {
         LinearLayout categoryLayoutMain = findViewById(R.id.category_layout);
         categoryLayoutMain.removeAllViews(); // Clear any previous data before adding new views
         for(Category category : categoryTracker.getCategories()){
-            Log.d("OverviewActivity", "Adding category: " + category.getCategoryName());
+            if(userAccount.getUserID().equals(category.getUserId())) {
+                Log.d("OverviewActivity", "Adding category: " + category.getCategoryName());
 
-            // Create a horizontal LinearLayout for each category
-            LinearLayout categoryLayout = new LinearLayout(this);
-            categoryLayout.setOrientation(LinearLayout.HORIZONTAL);
-            categoryLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT));
+                // Create a horizontal LinearLayout for each category
+                LinearLayout categoryLayout = new LinearLayout(this);
+                categoryLayout.setOrientation(LinearLayout.HORIZONTAL);
+                categoryLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT));
 
-            // Create the ImageView (this will be a picture of the color representing the category)
-            ImageView categoryImage = new ImageView(this);
-            String imageName = category.getCategoryColor().toLowerCase(); // Ensure this matches your image naming
-            int imageResource = getResources().getIdentifier(imageName, "drawable", getPackageName());
-            categoryImage.setImageResource(imageResource);
-            categoryImage.setLayoutParams(new LinearLayout.LayoutParams(100, 100)); // Set size for the image
-            categoryImage.setAdjustViewBounds(true); // Maintain aspect ratio
-            categoryImage.setPadding(22, 0, 0, 0);
+                // Create the ImageView (this will be a picture of the color representing the category)
+                ImageView categoryImage = new ImageView(this);
+                String imageName = category.getCategoryColor().toLowerCase(); // Ensure this matches your image naming
+                int imageResource = getResources().getIdentifier(imageName, "drawable", getPackageName());
+                categoryImage.setImageResource(imageResource);
+                categoryImage.setLayoutParams(new LinearLayout.LayoutParams(100, 100)); // Set size for the image
+                categoryImage.setAdjustViewBounds(true); // Maintain aspect ratio
+                categoryImage.setPadding(22, 0, 0, 0);
 
-            // Create the TextView
-            TextView categoryName = new TextView(this);
-            categoryName.setText(category.getCategoryName());
-            categoryName.setTextSize(24);
-            categoryName.setTypeface(null, Typeface.BOLD); // Make text bold
-            int colorResource = getResources().getIdentifier(category.getCategoryColor(), "color", getPackageName());
-            categoryName.setTextColor(ContextCompat.getColor(this, colorResource)); // OPTIONAL: Set the color to match category color
-            categoryName.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    100));
-            categoryName.setPadding(16, 0, 0, 0); // Optional padding to separate text from image
+                // Create the TextView
+                TextView categoryName = new TextView(this);
+                categoryName.setText(category.getCategoryName());
+                categoryName.setTextSize(24);
+                categoryName.setTypeface(null, Typeface.BOLD); // Make text bold
+                int colorResource = getResources().getIdentifier(category.getCategoryColor(), "color", getPackageName());
+                categoryName.setTextColor(ContextCompat.getColor(this, colorResource)); // OPTIONAL: Set the color to match category color
+                categoryName.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        100));
+                categoryName.setPadding(16, 0, 0, 0); // Optional padding to separate text from image
 
-            categoryName.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    TextView description = findViewById(R.id.descriptionText);
-                    description.setText(category.getCategoryDescription());
-                    findViewById(R.id.categoryDescription).setVisibility(View.VISIBLE);
-                }
-            });
+                categoryName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TextView description = findViewById(R.id.descriptionText);
+                        description.setText(category.getCategoryDescription());
+                        findViewById(R.id.categoryDescription).setVisibility(View.VISIBLE);
+                    }
+                });
 
-            // Add ImageView and TextView to the horizontal layout
-            categoryLayout.addView(categoryImage);
-            categoryLayout.addView(categoryName);
-            categoryLayout.setPadding(0,0,0,12);
+                // Add ImageView and TextView to the horizontal layout
+                categoryLayout.addView(categoryImage);
+                categoryLayout.addView(categoryName);
+                categoryLayout.setPadding(0, 0, 0, 12);
 
-            // Add the horizontal layout to the main category layout
-            categoryLayoutMain.addView(categoryLayout);
+                // Add the horizontal layout to the main category layout
+                categoryLayoutMain.addView(categoryLayout);
+            }
         }
     }
 
@@ -289,22 +295,26 @@ public class OverviewActivity extends AppCompatActivity {
             }
 
             for (Category category : categoryTracker.getCategories()) {
-                String currentCategory = category.getCategoryName();
-                double temp = 0;
-                LocalDate date = LocalDate.now();
-                YearMonth currentMonthYear = YearMonth.now();
+                if(userAccount.getUserID().equals(category.getUserId())) {
+                    String currentCategory = category.getCategoryName();
+                    double temp = 0;
+                    LocalDate date = LocalDate.now();
+                    YearMonth currentMonthYear = YearMonth.now();
 
-                // Sum all expenses under the current category
-                for (Expense x : loading) {
-                    if (x.getExpenseCategory().equals(currentCategory) && YearMonth.from(x.getDate()).equals(currentMonthYear)) {
-                        temp += x.getExpenseAmount();
-                        date = x.getDate();
-                        Log.i("PullExpenseData", "Date: " + date);
+                    // Sum all expenses under the current category
+                    for (Expense x : loading) {
+                        if (x.getExpenseCategory().equals(currentCategory) && YearMonth.from(x.getDate()).equals(currentMonthYear)) {
+                            temp += x.getExpenseAmount();
+                            date = x.getDate();
+                            Log.i("PullExpenseData", "Date: " + date);
+                        }
+                    }
+                    // Add the totaled expense for this category to the list
+                    if (currentCategory.equals("Unspent")) {
+                    } else if (date != null) {
+                        totaled.add(new Expense(userID, temp, currentCategory));
                     }
                 }
-                // Add the totaled expense for this category to the list
-                if (currentCategory.equals("Unspent")) {}
-                else if (date != null) { totaled.add(new Expense(userID, temp, currentCategory)); }
             }
 
             Log.i("PullExpenseData", "Number of Categories: " + totaled.size());
