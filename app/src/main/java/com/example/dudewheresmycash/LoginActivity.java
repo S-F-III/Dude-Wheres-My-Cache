@@ -41,12 +41,12 @@ public class LoginActivity extends AppCompatActivity {
 
         EditText inputUserID = (EditText) findViewById(R.id.inputUserID);
         EditText inputUserPassword = (EditText) findViewById(R.id.inputPassword);
-        Button nextButton = findViewById(R.id.next_button);
+        Button logInButton = findViewById(R.id.log_in_button);
         Button cancelButton = findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(v -> launchWelcome());
 
 
-        nextButton.setOnClickListener(new View.OnClickListener(){
+        logInButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 String userID = inputUserID.getText().toString();
@@ -85,6 +85,7 @@ public class LoginActivity extends AppCompatActivity {
                 intent.putExtra("USER_PASSWORD", pass);
                 intent.putExtra("USER_NAME", currAccount.getUserName());
                 intent.putExtra("USER_BUDGET", currAccount.getUserBudget());
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         }

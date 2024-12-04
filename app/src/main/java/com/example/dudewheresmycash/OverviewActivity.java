@@ -1,5 +1,6 @@
 package com.example.dudewheresmycash;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -151,6 +152,13 @@ public class OverviewActivity extends AppCompatActivity {
 
     }
 
+    /*@Override
+    @SuppressLint("MissingSuperCall")
+    public void onBackPressed() {
+        // Do nothing or show a confirmation dialog if needed
+        moveTaskToBack(true); // Moves the activity to the background instead of finishing it
+    }*/
+
     private void launchOverview() {
         Intent intent = new Intent(this, OverviewActivity.class);
         startActivity(intent);
@@ -177,10 +185,15 @@ public class OverviewActivity extends AppCompatActivity {
     }
     private void launchSignOut() {
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        sharedPreferences.edit().remove("USER_ID").apply();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("USER_ID").apply();
+        editor.clear(); // Clear all stored data
+        editor.apply();
 
         Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
     }
 
     private void createCategoryList(){

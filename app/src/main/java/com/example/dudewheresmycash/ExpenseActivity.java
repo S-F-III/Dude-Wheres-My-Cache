@@ -535,10 +535,15 @@ public class ExpenseActivity extends AppCompatActivity {
     }
     private void launchSignOut() {
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        sharedPreferences.edit().remove("USER_ID").apply();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("USER_ID").apply();
+        editor.clear(); // Clear all stored data
+        editor.apply();
 
         Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
     }
 
 
