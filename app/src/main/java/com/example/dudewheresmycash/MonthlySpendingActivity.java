@@ -36,8 +36,24 @@ import java.util.Map;
 import Model.Expense;
 import Model.ExpenseBank;
 
+/**
+ * The MonthlySpendingActivity class displays a graphical representation of the user's
+ * monthly spending in the form of a bar chart. It also provides navigation to other
+ * activities via a hamburger menu and buttons.
+ *
+ * This activity retrieves the logged-in user's ID from shared preferences, initializes
+ * the ExpenseBank to load user-specific expenses, and dynamically generates a bar chart
+ * summarizing monthly spending data.
+ */
 public class MonthlySpendingActivity extends AppCompatActivity {
 
+    /**
+     * Called when the activity is created.
+     * Initializes the UI components, sets up the hamburger menu and button click listeners,
+     * retrieves the user's ID from shared preferences, and prepares the monthly spending chart.
+     *
+     * @param savedInstanceState the saved state of the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,6 +174,13 @@ public class MonthlySpendingActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Processes the user's monthly expenses by aggregating expense amounts for each month.
+     *
+     * @param expenseBank The ExpenseBank containing user expenses.
+     * @param userId      The ID of the current user.
+     * @return A list of BarEntry objects representing monthly spending totals.
+     */
     private ArrayList<BarEntry> processMonthlyExpenses(ExpenseBank expenseBank, String userId){
         ArrayList<BarEntry> entries = new ArrayList<>();
         Map<Integer, Double> monthlyTotals = new HashMap<>();
@@ -186,35 +209,58 @@ public class MonthlySpendingActivity extends AppCompatActivity {
         return entries;
     }
 
-
-    private void launchHBMenu(){
-        Intent intent = new Intent(this, HamburgerActivity.class);
-        startActivity(intent);
-    }
+    /**
+     * Navigates to the OverviewActivity.
+     */
     private void launchOverview() {
         Intent intent = new Intent(this, OverviewActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Navigates to the ExpenseActivity.
+     */
     private void launchExpenses() {
         Intent intent = new Intent(this, ExpenseActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Navigates to the NotificationActivity.
+     */
     private void launchNotfications() {
         Intent intent = new Intent(this, NotificationActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Navigates to the AccountInfoActivity.
+     */
     private void launchAccountInfo() {
         Intent intent = new Intent(this, AccountInfoActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Navigates to the SettingsActivity.
+     */
     private void launchSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Navigates to the MonthlySpendingActivity.
+     * (Redundant here since it's already in MonthlySpendingActivity.)
+     */
     private void launchMonthlySpending() {
         Intent intent = new Intent(this, MonthlySpendingActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Signs the user out by clearing shared preferences and returning to the MainActivity.
+     */
     private void launchSignOut() {
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

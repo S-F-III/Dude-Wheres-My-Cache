@@ -17,10 +17,21 @@ import androidx.core.view.WindowInsetsCompat;
 import Model.AccountManager;
 import Model.UserAccount;
 
+/**
+ * The NameActivity class provides an interface for users to change their current name.
+ * It validates user input and updates the user's name in the account information.
+ */
 public class NameActivity extends AppCompatActivity {
 
     private AccountManager accountManager;
 
+    /**
+     * Called when the activity is created.
+     * Initializes the UI components, retrieves the current user ID from SharedPreferences,
+     * and sets up the save changes button click listener.
+     *
+     * @param savedInstanceState The saved state of the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +63,14 @@ public class NameActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Validates the user's input and updates the user's name if all checks pass.
+     * Navigates to the AccountInfoActivity upon successful update.
+     *
+     * @param userId  The ID of the current user.
+     * @param oldName The current name of the user as entered in the input field.
+     * @param newName The new name the user wants to set.
+     */
     private void launchAccountInfoActivity(String userId, String oldName, String newName){
         UserAccount account = accountManager.getUserAccount(userId);
 

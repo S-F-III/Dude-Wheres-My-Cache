@@ -12,8 +12,19 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+/**
+ * The MainActivity class serves as the entry point for the app.
+ * It initializes the main UI components and handles user interaction with the start button.
+ * When the start button is clicked, it navigates to the WelcomeActivity.
+ */
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * Called when the activity is created.
+     * Initializes the UI components and sets up the click listener for the start button.
+     *
+     * @param savedInstanceState The saved state of the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        //Start button for first page leads to welcome page (darius 11/6)
+        // Setup start button and its click listener
         Button startButton = findViewById(R.id.start_button);
         startButton.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -34,6 +45,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    /**
+     * Launches the WelcomeActivity when the start button is clicked.
+     *
+     * @param startButton The text displayed on the start button.
+     */
     private void launchActivity(String startButton){
         Intent intent = new Intent(this, WelcomeActivity.class);
         startActivity(intent);

@@ -31,11 +31,22 @@ import Model.ExpenseBank;
 import Model.Notification;
 import Model.NotificationBank;
 
+/**
+ * The NotificationActivity class handles the management and display of notifications.
+ * It allows users to add, remove, and view notifications specific to their account.
+ * The notifications are displayed dynamically, and the user can interact with them through the app's interface.
+ */
 public class NotificationActivity extends AppCompatActivity {
 
     private NotificationBank notificationBank;
-    private Notification notification;
 
+    /**
+     * Called when the activity is created.
+     * Initializes the UI components, handles system bar adjustments, sets up notification management,
+     * and configures button click listeners for adding, removing, and navigating through notifications.
+     *
+     * @param savedInstanceState The saved state of the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -173,6 +184,11 @@ public class NotificationActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Dynamically displays user's notifications
+     *
+     * @param userAcc The current user's ID to manage personalized notifications.
+     */
     private void dynamicNotificationSetup(String userAcc){
 
         createNotificationList();
@@ -234,11 +250,19 @@ public class NotificationActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Initializes the list of notifications from the internal-notifications csv file
+     */
     private void createNotificationList(){
         notificationBank = new NotificationBank(this);
         notificationBank.initializeNotificationList();
     }
 
+    /**
+     * Populates the notification list for removal, showing notifications associated with the current user.
+     *
+     * @param userAcc The current user's ID to filter notifications.
+     */
     private void populateNotificationList(String userAcc) {
         LinearLayout notificationListContainer = findViewById(R.id.removeNotification_layout);
         TextView removeSelectedNotificationButton = findViewById(R.id.submitRemoveButton);
@@ -274,6 +298,13 @@ public class NotificationActivity extends AppCompatActivity {
             Toast.makeText(this, "No expenses found for this user.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    /**
+     * Removes a notification from the list and updates the data file.
+     *
+     * @param notification The notification to be removed.
+     * @param userAcc The current user's ID to ensure correct removal.
+     */
     private void removeNotification(Notification notification, String userAcc) {
         // Remove the expense from the ExpenseBank
         boolean removed = notificationBank.removeNotification(notification);
@@ -289,36 +320,71 @@ public class NotificationActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to remove the expense.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    /**
+     * Clears any background selections in the notification list container.
+     *
+     * @param container The container holding the notification list buttons.
+     */
     private void clearSelections(LinearLayout container) {
         for (int i = 0; i < container.getChildCount(); i++) {
             View child = container.getChildAt(i);
             child.setBackgroundColor(Color.TRANSPARENT);
         }
     }
+
+    /**
+     * Navigates to the OverviewActivity.
+     */
     private void launchOverview() {
         Intent intent = new Intent(this, OverviewActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Navigates to the ExpenseActivity.
+     */
     private void launchExpenses() {
         Intent intent = new Intent(this, ExpenseActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Navigates to the NotificationActivity.
+     */
     private void launchNotfications() {
         Intent intent = new Intent(this, NotificationActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Navigates to the AccountInfoActivity.
+     */
     private void launchAccountInfo() {
         Intent intent = new Intent(this, AccountInfoActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Navigates to the SettingsActivity.
+     */
     private void launchSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Navigates to the MonthlySpendingActivity.
+     * (Redundant here since it's already in MonthlySpendingActivity.)
+     */
     private void launchMonthlySpending() {
         Intent intent = new Intent(this, MonthlySpendingActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Signs the user out by clearing shared preferences and returning to the MainActivity.
+     */
     private void launchSignOut() {
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

@@ -151,13 +151,6 @@ public class OverviewActivity extends AppCompatActivity {
 
     }
 
-    /*@Override
-    @SuppressLint("MissingSuperCall")
-    public void onBackPressed() {
-        // Do nothing or show a confirmation dialog if needed
-        moveTaskToBack(true); // Moves the activity to the background instead of finishing it
-    }*/
-
     private void launchOverview() {
         Intent intent = new Intent(this, OverviewActivity.class);
         startActivity(intent);

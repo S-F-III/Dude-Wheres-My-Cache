@@ -20,11 +20,22 @@ import Model.UserAccount;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-
+/**
+ * The LoginActivity class provides a login interface for users to enter their
+ * credentials and access their account. It validates the user's credentials against
+ * the stored account list and navigates to the OverviewActivity upon successful login.
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private AccountManager accountManager;
 
+    /**
+     * Called when the activity is created.
+     * Initializes the UI components, sets up the login and cancel button click listeners,
+     * and prepares the account list.
+     *
+     * @param savedInstanceState The saved state of the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +67,13 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Validates the user's credentials and launches the appropriate activity based on the input.
+     *
+     * @param button The name of the button triggering the action (e.g., "Next").
+     * @param id     The entered user ID.
+     * @param pass   The entered password.
+     */
     private void launchActivity(String button, String id, String pass){
         UserAccount currAccount = accountManager.getUserAccount(id);
 
@@ -86,6 +104,10 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Navigates to the WelcomeActivity.
+     * Typically used when the user cancels the login process.
+     */
     private void launchWelcome() {
         Intent intent = new Intent(this, WelcomeActivity.class);
         startActivity(intent);
