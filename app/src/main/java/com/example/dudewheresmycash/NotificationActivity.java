@@ -31,24 +31,46 @@ import Model.ExpenseBank;
 import Model.Notification;
 import Model.NotificationBank;
 
+/**
+ * Activity class for managing notifications.
+ * Provides functionality to dynamically display, add, and remove notifications for the current user.
+ * Includes navigation options to other sections of the app.
+ */
 public class NotificationActivity extends AppCompatActivity {
 
+    /**
+     * Manages the collection of notifications for the current user.
+     * Used for storing, retrieving, and modifying notification data.
+     */
     private NotificationBank notificationBank;
-    private Notification notification;
 
+    /**
+     *
+     * Called when the activity is starting.
+     * Sets up the layout, initializes the notification list, and configures the navigation and action buttons.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down,
+     *                           this Bundle contains the most recent data.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Enable edge-to-edge layout
         EdgeToEdge.enable(this);
+        // Set the layout resource for the activity
         setContentView(R.layout.activity_notification);
+        // Apply window insets for edge-to-edge design
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Retrieve user ID from shared preferences
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         String userId = sharedPreferences.getString("USER_ID", null);
 
+        // Dynamically set up the notification list
         dynamicNotificationSetup(userId);
 
         ImageView hbMenu = findViewById(R.id.hbMenu);
@@ -173,6 +195,12 @@ public class NotificationActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Dynamically sets up the notification list for the current user.
+     * Displays notifications for the current month.
+     *
+     * @param userAcc The ID of the current user.
+     */
     private void dynamicNotificationSetup(String userAcc){
 
         createNotificationList();
@@ -234,11 +262,20 @@ public class NotificationActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates and initializes the notification list from the NotificationBank.
+     */
     private void createNotificationList(){
         notificationBank = new NotificationBank(this);
         notificationBank.initializeNotificationList();
     }
 
+    /**
+     * Populates the notification list for removal.
+     * Allows the user to select and remove notifications.
+     *
+     * @param userAcc The ID of the current user.
+     */
     private void populateNotificationList(String userAcc) {
         LinearLayout notificationListContainer = findViewById(R.id.removeNotification_layout);
         TextView removeSelectedNotificationButton = findViewById(R.id.submitRemoveButton);
@@ -274,6 +311,13 @@ public class NotificationActivity extends AppCompatActivity {
             Toast.makeText(this, "No expenses found for this user.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    /**
+     * Removes the specified notification and updates the notification list.
+     *
+     * @param notification The notification to remove.
+     * @param userAcc      The ID of the current user.
+     */
     private void removeNotification(Notification notification, String userAcc) {
         // Remove the expense from the ExpenseBank
         boolean removed = notificationBank.removeNotification(notification);
@@ -289,36 +333,71 @@ public class NotificationActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to remove the expense.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    /**
+     * Clears selection highlights from all child views in the specified container.
+     *
+     * @param container The {@link LinearLayout} containing the notification views.
+     */
     private void clearSelections(LinearLayout container) {
         for (int i = 0; i < container.getChildCount(); i++) {
             View child = container.getChildAt(i);
             child.setBackgroundColor(Color.TRANSPARENT);
         }
     }
+
+    /**
+     * Launches the OverviewActivity.
+     */
     private void launchOverview() {
         Intent intent = new Intent(this, OverviewActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Launches the ExpenseActivity.
+     */
     private void launchExpenses() {
         Intent intent = new Intent(this, ExpenseActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Launches the NotificationActivity.
+     */
     private void launchNotfications() {
         Intent intent = new Intent(this, NotificationActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Launches the AccountInfoActivity.
+     */
     private void launchAccountInfo() {
         Intent intent = new Intent(this, AccountInfoActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Launches the SettingsActivity.
+     */
     private void launchSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Launches the MonthlySpendingActivity.
+     */
     private void launchMonthlySpending() {
         Intent intent = new Intent(this, MonthlySpendingActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * Signs out the user and clears shared preferences.
+     * Redirects to the MainActivity.
+     */
     private void launchSignOut() {
         SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
