@@ -36,26 +36,52 @@ import Model.Category;
 import Model.CategoryTracker;
 import Model.Expense;
 import Model.UserAccount;
+/**
+ * The {@code OverviewActivity} class is the main activity for the financial tracking app.
+ * This activity provides an overview of the user's financial data, including a pie chart
+ * to visualize spending and a personalized message based on the time of day.
+ * Key Features:
+ * - Displays the user's budget and spending categories.
+ * - Includes a pie chart for visualizing spending distribution.
+ * - Provides navigation to other parts of the app via a hamburger menu.
+ * - Integrates with user account data using {@link AccountManager}.
+ */
 
 public class OverviewActivity extends AppCompatActivity {
 
+    // Formatter for displaying numbers with two decimal points
     private static final DecimalFormat df = new DecimalFormat("0.00");
+
+    // Core objects for managing user data and displaying it in the UI
     private AccountManager accountManager;
     private UserAccount userAccount;
     private CategoryTracker categoryTracker;
     PieChart pieChart;
 
+
+    /**
+     * Called when the activity is first created.
+     * This method initializes the UI components, retrieves user data from shared preferences,
+     * and sets up dynamic content like the pie chart and category layout.
+     *
+     * @param savedInstanceState Saved state of the activity if it is being re-initialized.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Enable edge-to-edge content for modern Android design
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_overview);
+
+        // Apply window insets for seamless integration with system UI
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        // Initialize UI components
         pieChart = findViewById(R.id.pieChart);
        ImageView hbMenu = findViewById(R.id.hbMenu);
        ImageView hbMenu2 = findViewById(R.id.hbMenu2);
@@ -68,45 +94,94 @@ public class OverviewActivity extends AppCompatActivity {
        TextView signOutButton = findViewById(R.id.signOutButton);
        Button okayButton = findViewById(R.id.okayButton);
 
+        /**
+         * Sets up the listener for the OK button.
+         * When clicked, hides the category description view.
+         */
        okayButton.setOnClickListener(v -> findViewById(R.id.categoryDescription).setVisibility(View.GONE));
+
+        /**
+         * Sets up the listener for the hamburger menu button.
+         * When clicked, displays the hamburger menu view.
+         */
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
+
+        /**
+         * Sets up the listener for the secondary hamburger menu button.
+         * When clicked, hides the hamburger menu view.
+         */
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
+
+        /**
+         * Sets up the listener for the Overview button.
+         * When clicked, navigates to the Overview screen.
+         */
         overviewButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 launchOverview();
             }
         });
+
+        /**
+         * Sets up the listener for the Expenses button.
+         * When clicked, navigates to the Expenses screen.
+         */
         expenseButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 launchExpenses();
             }
         });
+
+        /**
+         * Sets up the listener for the Notifications button.
+         * When clicked, navigates to the Notifications screen.
+         */
         notificationButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 launchNotfications();
             }
         });
+
+        /**
+         * Sets up the listener for the Account Info button.
+         * When clicked, navigates to the Account Info screen.
+         */
         accountInfoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 launchAccountInfo();
             }
         });
+
+        /**
+         * Sets up the listener for the Settings button.
+         * When clicked, navigates to the Settings screen.
+         */
         settingsButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 launchSettings();
             }
         });
+
+        /**
+         * Sets up the listener for the Monthly Spending button.
+         * When clicked, navigates to the Monthly Spending screen.
+         */
         monthlySpendingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 launchMonthlySpending();
             }
         });
+
+        /**
+         * Sets up the listener for the Sign Out button.
+         * When clicked, logs the user out and navigates to the Sign Out screen.
+         */
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,12 +194,14 @@ public class OverviewActivity extends AppCompatActivity {
         String userId = sharedPreferences.getString("USER_ID", null);
 
         if (userId != null) {
+            // Initialize account manager and fetch user data
             accountManager = new AccountManager(this);
             accountManager.initializeAccountList();
             userAccount = accountManager.getUserAccount(userId);
         }
 
         if (userAccount != null) {
+            // Display personalized greetings and user budget
             String userName = userAccount.getUserName();
             String userBudget = userAccount.getUserBudget();
 
@@ -146,6 +223,7 @@ public class OverviewActivity extends AppCompatActivity {
             Toast.makeText(this, "User's account is null", Toast.LENGTH_SHORT).show();
         }
 
+        // Setup dynamic content
         dynamicCategorySetup();
         createPieChart(this,Double.parseDouble(userAccount.getUserBudget()), pieChart, userAccount.getUserID());
 
@@ -262,7 +340,21 @@ public class OverviewActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Creates and configures a PieChart based on user expenses for the current month.
+     *
+     * This method reads expense data from a CSV file, filters it by the user's ID and
+     * the current month, and organizes it into categories. It then calculates the total
+     * expense for each category, adds this data to a PieChart, and updates a TextView to
+     * display the total amount spent.
+     *
+     * @param activity  the activity from which this method is called, used for accessing files and resources
+     * @param total     the user's total budget for the current month
+     * @param pieChart  the PieChart object to be populated with expense data
+     * @param userID    the ID of the user whose expenses will be displayed
+     */
     private void createPieChart(OverviewActivity activity, double total, PieChart pieChart, String userID){
+        // Initialize category list and variables for storing data
         createCategoryList();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         ArrayList<Expense> loading = new ArrayList<>();
@@ -274,6 +366,7 @@ public class OverviewActivity extends AppCompatActivity {
 
         File expenses = new File(activity.getFilesDir(), fileName);
         try (BufferedReader read = new BufferedReader(new FileReader(expenses))) {
+            // Read and parse the CSV file line by line
             String line;
             while ((line = read.readLine()) != null) {
                 String[] values = line.split(",");
@@ -281,11 +374,14 @@ public class OverviewActivity extends AppCompatActivity {
                 String category = values[3];
                 LocalDate date = LocalDate.parse(values[5].trim(), formatter);
                 double value = Double.parseDouble(values[2]);
+
+                // Filter expenses by user ID
                 if (owner.equals(userID)) {
                     loading.add(new Expense(owner, value, category, date));
                 }
             }
 
+            // Sum expenses for each category for the current month
             for (Category category : categoryTracker.getCategories()) {
                 if(userAccount.getUserID().equals(category.getUserId())) {
                     String currentCategory = category.getCategoryName();
@@ -313,12 +409,14 @@ public class OverviewActivity extends AppCompatActivity {
 
 
 
-            // Add the remaining slice
+            // Add categorized data to the PieChart entries
             for (Expense expense : totaled) {
                 Log.i("PullExpenseData", "Expense: " + expense.getExpenseAmount() + "for " + expense.getExpenseCategory());
                 total -= expense.getExpenseAmount();
                 pieEntries.add(new PieEntry((float) expense.getExpenseAmount()));
             }
+
+            // Add the remaining budget to the chart
             if (total > 0) { pieEntries.add(new PieEntry((float) total)); }
         } catch (IOException e) {
             Log.e("PullExpenseData", "File Not Found");
@@ -335,7 +433,7 @@ public class OverviewActivity extends AppCompatActivity {
         // Create PieData
         PieData data = new PieData(dataSet);
 
-        // Configure the PieChart
+        // Configure the PieChart and its appearance
         pieChart.setData(data);
         pieChart.setUsePercentValues(false); // Enable percentage display
         pieChart.getDescription().setEnabled(false); // Remove chart description
