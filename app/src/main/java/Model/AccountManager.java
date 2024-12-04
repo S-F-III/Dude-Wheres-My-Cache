@@ -144,4 +144,8 @@ public class AccountManager {
             Log.e(TAG, "Account cannot be found for " + userId);
         }
     }
+
+    public boolean removeUserAccount(UserAccount account) {
+        return userAccounts.remove(account); // Remove from the ArrayList
+    }
 }

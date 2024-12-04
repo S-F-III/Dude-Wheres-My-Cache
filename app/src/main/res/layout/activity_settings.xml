@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="120dp"
-        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
         android:orientation="vertical"
         android:backgroundTint="#89C18E"
         android:textColor="#000000"
@@ -45,32 +45,23 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:padding="12dp"
-            android:text="Add Custom Category"
+            android:layout_gravity="center"
+            android:text="Rename Category"
             android:backgroundTint="#89C18E"
             android:textColor="#000000"
-            android:textSize="16sp" />
-
-        <Button
-            android:id="@+id/removeCustomCategoryButton"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:padding="12dp"
-            android:text="Remove Custom Category"
-            android:backgroundTint="#89C18E"
-            android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="24sp"/>
 
         <Button
             android:id="@+id/exportDataButton"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
+            android:layout_gravity="center"
             android:padding="12dp"
             android:text="Export Data"
             android:backgroundTint="#89C18E"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="24sp"/>
 
         <Button
             android:id="@+id/clearBudgetDataButton"
@@ -78,10 +69,22 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:padding="12dp"
+            android:layout_gravity="center"
             android:text="Clear Budget Data"
             android:backgroundTint="#89C18E"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            android:textSize="24sp" />
+        <Button
+            android:id="@+id/deleteAccountButton"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:padding="12dp"
+            android:layout_gravity="center"
+            android:text="Delete Account"
+            android:backgroundTint="#89C18E"
+            android:textColor="#000000"
+            android:textSize="24sp" />
 
     </LinearLayout>
 
@@ -245,24 +248,26 @@
         app:layout_constraintStart_toStartOf="parent">
 
 
-        <Button
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="82dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="82dp"
-            android:layout_marginBottom="202dp"
+            android:layout_marginStart="41dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginEnd="42dp"
+            android:layout_marginBottom="217dp"
             android:backgroundTint="#89C18E"
             android:text="Are you sure?"
-            android:textColor="#000000">
+            android:textColor="#000000"
+            android:textSize="36sp">
 
-        </Button>
+        </TextView>
 
         <Button
+            android:id="@+id/yesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"

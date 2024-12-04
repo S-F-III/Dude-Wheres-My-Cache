@@ -1,11 +1,14 @@
 package com.example.dudewheresmycash;
 
+import android.accounts.Account;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +16,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.ArrayList;
+
+import Model.AccountManager;
+import Model.Expense;
+import Model.Notification;
+import Model.NotificationBank;
+import Model.ExpenseBank;
+import Model.UserAccount;
+
 public class SettingsActivity extends AppCompatActivity {
+
+    private ExpenseBank expenseBank;
+    private NotificationBank notificationBank;
+    private AccountManager accountManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +41,9 @@ public class SettingsActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        SharedPreferences sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userId = sharedPreferences.getString("USER_ID", null);
 
         ImageView hbMenu = findViewById(R.id.hbMenu);
         ImageView hbMenu2 = findViewById(R.id.hbMenu2);
@@ -39,9 +58,22 @@ public class SettingsActivity extends AppCompatActivity {
         Button clearBudgetButton = findViewById(R.id.clearBudgetDataButton);
         Button exportDataButton = findViewById(R.id.exportDataButton);
         Button noButton = findViewById(R.id.noButton);
+        Button deleteAccountButton = findViewById(R.id.deleteAccountButton);
 
         clearBudgetButton.setOnClickListener(v -> findViewById(R.id.clearBudgetBox).setVisibility(View.VISIBLE));
         exportDataButton.setOnClickListener(v -> findViewById(R.id.clearBudgetBox).setVisibility(View.VISIBLE));
+        deleteAccountButton.setOnClickListener(v -> {
+            findViewById(R.id.clearBudgetBox).setVisibility(View.VISIBLE);
+            Button yesButton = findViewById(R.id.yesButton);
+            yesButton.setOnClickListener(v1 -> {
+                deleteAccount(userId);
+                launchSignOut();
+
+            });
+
+        });
+
+
         noButton.setOnClickListener(v -> findViewById(R.id.clearBudgetBox).setVisibility(View.GONE));
         hbMenu.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.VISIBLE));
         hbMenu2.setOnClickListener(v -> findViewById(R.id.hamburgerMenu).setVisibility(View.GONE));
@@ -88,6 +120,78 @@ public class SettingsActivity extends AppCompatActivity {
                 launchSignOut();
             }
         });
+    }
+
+    private void deleteAccount(String userID) {
+        AccountManager accountManager = new AccountManager(this);
+
+        createExpenseList();
+        accountManager.initializeAccountList();
+        createNotificationList();
+
+        ArrayList<Expense> expenseRemoval = new ArrayList<>();
+        for(Expense x : expenseBank.getExpenses()){
+            if(x.getExpenseOwner().equals(userID)){
+                expenseRemoval.add(x);
+            }
+        }
+        for (Expense x : expenseRemoval) { removeExpense(x, userID); }
+        ArrayList<Notification> notificationRemoval = new ArrayList<>();
+        for(Notification x: notificationBank.getNotifications()){
+            if(x.getOwner().equals(userID)){
+                notificationRemoval.add(x);
+
+            }
+        }
+        for (Notification x : notificationRemoval) { removeNotification(x, userID); }
+        ArrayList<UserAccount> accountRemoval = new ArrayList<>();
+        for(UserAccount x : accountManager.getUserAccounts()){
+            if(x.getUserID().equals(userID)){
+                accountRemoval.add(x);
+
+            }
+        }
+        for (UserAccount x : accountRemoval) { removeAccount(x, userID, accountManager); }
+
+    }
+
+    private void removeNotification(Notification notification, String userAcc) {
+        // Remove the expense from the ExpenseBank
+        boolean removed = notificationBank.removeNotification(notification);
+
+        if (removed) {
+           // Update the CSV file
+            notificationBank.saveNotificationToFile();
+        }
+    }
+
+    private void removeAccount(UserAccount account, String userAcc, AccountManager accountManager) {
+        boolean removed = accountManager.removeUserAccount(account);
+
+        if (removed) {
+            Toast.makeText(this, "Account removed successfully!", Toast.LENGTH_SHORT).show();
+
+            accountManager.saveAccountsToFile();
+        }
+    }
+
+    private void removeExpense(Expense expense, String userAcc) {
+        // Remove the expense from the ExpenseBank
+        boolean removed = expenseBank.removeExpense(expense);
+
+        if (removed) {
+            // Update the CSV file
+            expenseBank.saveExpensesToFile();
+        }
+    }
+
+    private void createExpenseList(){
+        expenseBank = new ExpenseBank(this);
+        expenseBank.initializeExpenseList();
+    }
+    private void createNotificationList(){
+        notificationBank = new NotificationBank(this);
+        notificationBank.initializeNotificationList();
     }
 
     private void launchOverview() {
