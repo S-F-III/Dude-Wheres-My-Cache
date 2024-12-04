@@ -64,8 +64,15 @@ public class SettingsActivity extends AppCompatActivity {
         Button deleteAccountButton = findViewById(R.id.deleteAccountButton);
         Button renameCategoryButton = findViewById(R.id.addCustomCategoryButton);
 
-        clearBudgetButton.setOnClickListener(v -> findViewById(R.id.clearBudgetBox).setVisibility(View.VISIBLE));
         exportDataButton.setOnClickListener(v -> findViewById(R.id.clearBudgetBox).setVisibility(View.VISIBLE));
+        clearBudgetButton.setOnClickListener(v -> {
+            findViewById(R.id.clearBudgetBox).setVisibility(View.VISIBLE);
+            Button yesButton = findViewById(R.id.yesButton);
+            yesButton.setOnClickListener(v1 -> {
+                clearBudgetData(userId);
+                findViewById(R.id.clearBudgetBox).setVisibility(View.GONE);
+            });
+        });
         deleteAccountButton.setOnClickListener(v -> {
             findViewById(R.id.clearBudgetBox).setVisibility(View.VISIBLE);
             Button yesButton = findViewById(R.id.yesButton);
@@ -130,6 +137,20 @@ public class SettingsActivity extends AppCompatActivity {
                 launchCustomCategoryActivity();
             }
         });
+    }
+
+    private void clearBudgetData(String userID){
+        createExpenseList();
+        ArrayList<Expense> expenseRemoval = new ArrayList<>();
+
+        for(Expense x : expenseBank.getExpenses()){
+            if(x.getExpenseOwner().equals(userID)){
+                expenseRemoval.add(x);
+            }
+        }
+
+        for (Expense x : expenseRemoval) { removeExpense(x, userID); }
+        Toast.makeText(this, "Budget data cleared!", Toast.LENGTH_SHORT).show();
     }
 
     private void deleteAccount(String userID) {
