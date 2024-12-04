@@ -40,9 +40,6 @@
             android:name=".NotificationActivity"
             android:exported="false" />
         <activity
-            android:name=".HamburgerActivity"
-            android:exported="false" />
-        <activity
             android:name=".OverviewActivity"
             android:exported="false" />
         <activity
