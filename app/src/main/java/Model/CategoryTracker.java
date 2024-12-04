@@ -151,4 +151,8 @@ public class CategoryTracker {
         }
         return null;
     }
+
+    public boolean removeCategory(Category category) {
+        return categories.remove(category); // Remove from the ArrayList
+    }
 }

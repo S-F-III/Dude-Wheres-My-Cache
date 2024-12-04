@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,6 +25,8 @@ import Model.Notification;
 import Model.NotificationBank;
 import Model.ExpenseBank;
 import Model.UserAccount;
+import Model.Category;
+import Model.CategoryTracker;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -131,11 +134,24 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void deleteAccount(String userID) {
         AccountManager accountManager = new AccountManager(this);
+        CategoryTracker categoryTracker = new CategoryTracker();
 
+
+       // categoryTracker.saveCategoriesToInternalFile(this, "categories.csv");
+        categoryTracker.loadCategoriesFromInternalFile(this, "internal-categories.csv", userID);
         createExpenseList();
         accountManager.initializeAccountList();
         createNotificationList();
 
+        ArrayList<Category> categoryRemoval = new ArrayList<>();
+        for(Category x : categoryTracker.getCategories()){
+            if(x.getUserId().equals(userID)){
+                categoryRemoval.add(x);
+                Log.i("LoadingCategory", "Category Found");
+            }
+
+        }
+        for (Category x : categoryRemoval) { removeUserCategories(x, categoryTracker); }
         ArrayList<Expense> expenseRemoval = new ArrayList<>();
         for(Expense x : expenseBank.getExpenses()){
             if(x.getExpenseOwner().equals(userID)){
@@ -162,6 +178,13 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    public void removeUserCategories(Category category, CategoryTracker categoryTracker) {
+        boolean removed = categoryTracker.removeCategory(category);
+
+        if(removed) {
+            categoryTracker.saveCategoriesToInternalFile(this, "internal-categories.csv");
+        }
+    }
     private void removeNotification(Notification notification, String userAcc) {
         // Remove the expense from the ExpenseBank
         boolean removed = notificationBank.removeNotification(notification);
