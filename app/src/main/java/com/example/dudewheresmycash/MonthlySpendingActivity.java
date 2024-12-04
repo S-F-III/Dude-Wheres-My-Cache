@@ -187,10 +187,6 @@ public class MonthlySpendingActivity extends AppCompatActivity {
     }
 
 
-    private void launchHBMenu(){
-        Intent intent = new Intent(this, HamburgerActivity.class);
-        startActivity(intent);
-    }
     private void launchOverview() {
         Intent intent = new Intent(this, OverviewActivity.class);
         startActivity(intent);
