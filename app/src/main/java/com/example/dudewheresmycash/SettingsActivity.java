@@ -32,7 +32,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     private ExpenseBank expenseBank;
     private NotificationBank notificationBank;
-    private AccountManager accountManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
