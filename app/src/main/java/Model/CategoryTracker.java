@@ -12,23 +12,54 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Manages a collection of {@link Category} objects, allowing for loading, saving, and managing
+ * categories in budget tracker application. Supports operations for associating categories with users.
+ */
 public class CategoryTracker {
 
+    /**
+     * Tag used for logging messages.
+     */
     private static final String TAG = "Category";
+
+    /**
+     * A list of {@link Category} objects managed by this tracker.
+     */
     private ArrayList<Category> categories;
 
+    /**
+     * Constructs a new {@code CategoryTracker} with an empty list of categories.
+     */
     public CategoryTracker(){
         categories = new ArrayList<Category>();
     }
 
+    /**
+     * Retrieves the list of categories managed by this tracker.
+     *
+     * @return a list of {@link Category} objects
+     */
     public ArrayList<Category> getCategories() {
         return this.categories;
     }
 
+    /**
+     * Sets the list of categories managed by this tracker.
+     *
+     * @param categories a list of {@link Category} objects
+     */
     public void setCategories(ArrayList<Category> categories) {
         this.categories = categories;
     }
 
+    /**
+     * Copies a file from the assets folder to internal storage if it does not already exist.
+     *
+     * @param context         the application context
+     * @param assetFileName   the name of the asset file to copy
+     * @param internalFileName the name of the destination file in internal storage
+     */
     public void initializeInternalStorage(Context context, String assetFileName, String internalFileName) {
         File internalFile = new File(context.getFilesDir(), internalFileName);
 
@@ -52,6 +83,14 @@ public class CategoryTracker {
         }
     }
 
+    /**
+     * Loads categories from a specified internal file. If the user does not have existing categories,
+     * default categories are created.
+     *
+     * @param context  the application context
+     * @param filename the name of the file in internal storage
+     * @param userId   the ID of the user whose categories are being loaded
+     */
     public void loadCategoriesFromInternalFile(Context context, String filename, String userId) {
         categories.clear(); // Clear the list before loading
         boolean userExists = false;
@@ -95,6 +134,12 @@ public class CategoryTracker {
         }
     }
 
+    /**
+     * Saves the current list of categories to a specified internal file.
+     *
+     * @param context  the application context
+     * @param filename the name of the file in internal storage
+     */
     public void saveCategoriesToInternalFile(Context context, String filename) {
         try {
             File file = new File(context.getFilesDir(), filename);
@@ -122,6 +167,11 @@ public class CategoryTracker {
         }
     }
 
+    /**
+     * Adds a set of default categories for a specific user.
+     *
+     * @param userId the ID of the user for whom to add default categories
+     */
     private void addDefaultCategoriesForUser(String userId) {
         // Add default categories for the new user
         categories.add(new Category("Housing","green","Expenses related to residence", userId));
@@ -133,6 +183,13 @@ public class CategoryTracker {
         categories.add(new Category("Unspent", "white", "Remaining space for expenses", userId));
     }
 
+    /**
+     * Retrieves a category by its name and user ID.
+     *
+     * @param userCategory the name of the category
+     * @param userId       the ID of the user who owns the category
+     * @return the {@link Category} object, or {@code null} if not found
+     */
     public Category getCategoryByID(String userCategory, String userId){
         for(Category category : categories){
             if(category.getUserId().equals(userId) && category.getCategoryName().equals(userCategory)){
@@ -142,6 +199,12 @@ public class CategoryTracker {
         return null;
     }
 
+    /**
+     * Removes a specified category from the list of categories.
+     *
+     * @param category the {@link Category} to remove
+     * @return {@code true} if the category was successfully removed; {@code false} otherwise
+     */
     public boolean removeCategory(Category category) {
         return categories.remove(category); // Remove from the ArrayList
     }
