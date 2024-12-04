@@ -15,27 +15,67 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Manages a collection of {@code Expense} objects for a specific user in a budget tracking application.
+ * Provides functionality to load, save, retrieve, and modify expenses stored in a CSV file.
+ */
 public class ExpenseBank {
 
+    /**
+     * List of expenses managed by this bank.
+     */
     public ArrayList<Expense> expenses;
+
+    /**
+     * Activity context used for file operations.
+     */
     private final Activity activity;
+
+    /**
+     * Name of the file where expenses are stored.
+     */
     private static final String FILENAME = "expense-list.csv";
+
+    /**
+     * Tag used for logging operations in this class.
+     */
     private static final String TAG = "ExpenseBank";
 
+    /**
+     * Constructs an {@code ExpenseBank} object and initializes the expense list.
+     *
+     * @param activity the activity context used for file operations
+     */
     public ExpenseBank(Activity activity){
         this.activity = activity;
         expenses = new ArrayList<Expense>();
     }
 
+    /**
+     * Retrieves the list of expenses managed by this bank.
+     *
+     * @return the list of expenses
+     */
     public ArrayList<Expense> getExpenses() {
         return expenses;
     }
 
+    /**
+     * Sets the list of expenses managed by this bank.
+     *
+     * @param expenses the list of expenses to set
+     */
     public void setExpenses(ArrayList<Expense> expenses) {
         this.expenses = expenses;
     }
 
-    //Finds an expense using specific expenseID
+    /**
+     * Finds and retrieves an expense by its ID and owner.
+     *
+     * @param expenseID the unique ID of the expense
+     * @param userID    the ID of the user who owns the expense
+     * @return the expense if found, or {@code null} otherwise
+     */
     public Expense getExpenseByID(String expenseID, String userID){
         for (Expense expense : expenses){
             if(expense.getExpenseOwner().equals(userID) && expense.getExpenseID() == Integer.parseInt(expenseID)){
@@ -45,7 +85,9 @@ public class ExpenseBank {
         return null;
     }
 
-    // Method to initialize or create the expense list file if it doesn't exist
+    /**
+     * Initializes the expense list file. If the file does not exist, it creates a new one.
+     */
     public void initializeExpenseList() {
         try {
             // Attempt to read the file
@@ -67,7 +109,11 @@ public class ExpenseBank {
         }
     }
 
-    // Load expenses from the file
+    /**
+     * Loads user expenses from the specified input stream.
+     *
+     * @param in the input stream containing expense data
+     */
     public void loadUserExpenses(InputStream in) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -102,7 +148,11 @@ public class ExpenseBank {
         }
     }
 
-    // Method to add a new user account
+    /**
+     * Adds a new expense to the list.
+     *
+     * @param expense the expense to add
+     */
     public void addUserExpense(Expense expense) {
         if (expenses == null) {
             expenses = new ArrayList<>();
@@ -113,7 +163,9 @@ public class ExpenseBank {
     }
 
 
-    // Save all user expenses to the file
+    /**
+     * Saves all user expenses to the CSV file.
+     */
     public void saveExpensesToFile() {
         try {
             OutputStream out = activity.openFileOutput(FILENAME, Context.MODE_PRIVATE);
@@ -129,6 +181,12 @@ public class ExpenseBank {
         }
     }
 
+    /**
+     * Removes an expense from the list.
+     *
+     * @param expense the expense to remove
+     * @return {@code true} if the expense was successfully removed; {@code false} otherwise
+     */
     public boolean removeExpense(Expense expense) {
         return expenses.remove(expense); // Remove from the ArrayList
     }
