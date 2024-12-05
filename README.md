@@ -99,6 +99,11 @@ Sign Out
 ### Bug Fixes and Features
 Feel free to open issues or submit pull requests to contribute to this project. Whether it's fixing bugs, improving performance, or adding new features, your contributions are welcome!
 
+## Known Issues
+- Account creation date currently does not work as intended, it only saves the users sign up date. Whenever the user logs in, it cannot pull the creation date anymore.
+- The export data button does nothing right now, it is functionless
+- Can still press backspace to go into the previous page after changing any of the user information.
+
 ### Steps for Contributing
 1. Fork the repository.
 2. Create a new branch for your changes (git checkout -b feature-name).
@@ -110,5 +115,9 @@ Feel free to open issues or submit pull requests to contribute to this project. 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
+- Steve Fleming
+- Darius Chavez
+- Tala Kamil
+- Ashley Salas
 - Android Developer Documentation - for providing valuable resources and guidance throughout the development of the app.
 - Android Studio - for the IDE that was used to develop this app.
